@@ -37,30 +37,13 @@ public class MemberController {
 	@Autowired
 	JavaMailSender javaMailSender;
 
-	// 메인 (로그인 X)
-	@GetMapping("/main")
-	public String main() throws Exception {
-		return "main";
-	}
-
-	// 로그인 폼
-	@GetMapping("/login")
-	public String loginForm() throws Exception {
-		return "member/loginForm";
-	}
-
-	// 로그인 처리
+	// 로그인
 	@PostMapping("/login")
-	public String login(HttpSession session, @RequestParam Map<String, String> map) throws Exception {
-		String nextPage = "";
+	@ResponseBody
+	public MemberDTO login(HttpSession session, @RequestParam Map<String, String> map) throws Exception {
 		MemberDTO memberDTO = memberService.selectMember(map);
-		if (memberDTO != null) {
-			session.setAttribute("login", memberDTO);
-			nextPage = "redirect:/home";
-		} else {
-			nextPage = "member/loginFail";
-		}
-		return nextPage;
+		session.setAttribute("login", memberDTO);
+		return memberDTO;
 	}
 
 	// 로그아웃
@@ -75,45 +58,45 @@ public class MemberController {
 	public String sessionInvalidate() throws Exception {
 		return "common/sessionInvalidate";
 	}
-	
+
 	// 회원가입 폼
 	@GetMapping("/signUp")
 	public String memberForm() throws Exception {
 		return "member/signUpForm";
 	}
-	
+
 	// 일반 회원가입 폼
 	@GetMapping("/generalSignUp")
 	public String generalSignUpForm() throws Exception {
 		return "member/generalSignUpForm";
 	}
-	
+
 	// 상담사 회원가입 폼
 	@GetMapping("/counselorSignUp")
 	public String counselorSignUpForm() throws Exception {
 		return "member/counselorSignUpForm";
 	}
-	
+
 	// 일반회원가입 처리
 	@PostMapping("/generalSignUp")
 	public String insertGeneral(MemberDTO memberDTO) throws Exception {
 		memberService.generalSignUp(memberDTO);
 		return "member/loginForm";
 	}
-	
+
 	// 상담사 회원가입 처리
 	@PostMapping("/counselorSignUp")
 	public String insertCounselor(MemberDTO memberDTO) throws Exception {
 		memberService.counselorSignUp(memberDTO);
 		return "member/loginForm";
 	}
-	
+
 	// 비번찾기 폼
 	@GetMapping("/findPw")
 	public String findPw() throws Exception {
 		return "member/findPwForm";
 	}
-	
+
 	// 새 비번 폼
 	@PostMapping("/findPw")
 	public String newPwForm(HttpSession session, @RequestParam("email") String email) throws Exception {
@@ -121,30 +104,32 @@ public class MemberController {
 		session.setAttribute("findPw", memberDTO);
 		return "member/newPwForm";
 	}
+
 	@GetMapping("/myPage/newPwForm")
 	public String myPageNewPwForm(HttpSession session) throws Exception {
 		session.getAttribute("login");
 		return "member/myPageNewPwForm";
 	}
-	
+
 	// 새 비번 변경
 	@PutMapping("/newPw")
 	@ResponseBody
 	public int newPw(MemberDTO memberDTO) throws Exception {
 		return memberService.newPw(memberDTO);
 	}
+
 	@PutMapping("/myPage/newPw")
 	@ResponseBody
 	public int myPageNewPw(MemberDTO memberDTO) throws Exception {
 		return memberService.newPw(memberDTO);
 	}
-	
+
 	// mypage 폼
 	@GetMapping("/mypage")
 	public String mypage() throws Exception {
 		return "mypage";
 	}
-	
+
 	// mypage 비번 재확인 및 privilege에 따른 폼 분리
 	@PostMapping("/mypage2")
 	@ResponseBody
@@ -152,24 +137,24 @@ public class MemberController {
 		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
 		String passwordCompare = mDTO.getPassword();
 		int privilege = mDTO.getPrivilege();
-		if(!passwordCompare.equals(password)) {
+		if (!passwordCompare.equals(password)) {
 			System.out.println("1");
 			return "/narangnorang/mypage";
-		}else if(privilege == 0) {
+		} else if (privilege == 0) {
 			System.out.println(2);
 			return "/narangnorang/admin";
-		}else {
+		} else {
 			System.out.println(3);
 			return "/narangnorang/mypage/edit";
 		}
 	}
-	
+
 	// mypage 개인정보 수정 화면
 	@GetMapping("/mypage/edit")
 	public String edit() throws Exception {
 		return "mypageEdit";
 	}
-	
+
 	// 일반회원 정보 수정
 	@PutMapping("/generalEdit")
 	public String generalEdit(HttpSession session, MemberDTO memberDTO) throws Exception {
@@ -184,7 +169,7 @@ public class MemberController {
 		session.setAttribute("login", memberDTO);
 		return "redirect:/mypage/edit";
 	}
-	
+
 	// 상담사회원 정보 수정
 	@PutMapping("/counselorEdit")
 	public String counselorEdit(HttpSession session, MemberDTO memberDTO) throws Exception {
@@ -197,21 +182,22 @@ public class MemberController {
 		memberService.counselorEdit(memberDTO);
 		return "redirect:/mypage/edit";
 	}
-	
+
 	// 프로필 사진 수정
 	@PutMapping("/photoUpdate")
-	public String photoUpdate(HttpSession session, MemberDTO memberDTO, @RequestParam("filename") MultipartFile mFile) throws Exception {
+	public String photoUpdate(HttpSession session, MemberDTO memberDTO, @RequestParam("filename") MultipartFile mFile)
+			throws Exception {
 		String uploadPath = "C:/bootstudy/sts-bundle/sts-3.9.14.RELEASE/project/HighFive/NarangNorang/src/main/resources/static/images/member/";
 		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
 		try {
-			if(mDTO.getPhoto() != null) {
+			if (mDTO.getPhoto() != null) {
 				File file = new File(uploadPath + mDTO.getPhoto());
 				file.delete();
 			}
 			String newName = mFile.getOriginalFilename();
 			newName = String.valueOf(mDTO.getId());
 			mFile.transferTo(new File(uploadPath + newName + ".png"));
-			
+
 			mDTO.setPhoto(newName);
 			memberService.photoUpdate(memberDTO);
 			session.setAttribute("login", mDTO);
@@ -220,91 +206,91 @@ public class MemberController {
 		}
 		return "redirect:/mypage/edit";
 	}
-	
+
 	// 관리자 페이지 - 회원 관리
-	@GetMapping(value="/admin")
+	@GetMapping(value = "/admin")
 	@ResponseBody
-	public ModelAndView getAllLists() throws Exception{
+	public ModelAndView getAllLists() throws Exception {
 		List<MemberDTO> lists = memberService.selectAll();
 		ModelAndView mav = new ModelAndView("member/adminEdit");
 		mav.addObject("lists", lists);
 		return mav;
 	}
-	
+
 	// 관리자 페이지 - 선택 계정 삭제
 	@GetMapping("/admin/delMember")
-	public String delMember(HttpServletRequest request) throws Exception{
+	public String delMember(HttpServletRequest request) throws Exception {
 		String nextPage = "";
-		String [] check = request.getParameterValues("check");
-		if(check == null) {
+		String[] check = request.getParameterValues("check");
+		if (check == null) {
 			nextPage = "member/delFail";
-		}else {
+		} else {
 			List<String> list = Arrays.asList(check);
 			memberService.delSelected(list);
 			nextPage = "redirect:/admin";
 		}
 		return nextPage;
 	}
-	
+
 	// 관리자 페이지 - 상담사 권한 관리
 	@GetMapping("/admin/counselPrivilege2")
 	@ResponseBody
-	public ModelAndView getPrivileage2() throws Exception{
+	public ModelAndView getPrivileage2() throws Exception {
 		List<MemberDTO> lists = memberService.selectByPrivileage2();
 		ModelAndView mav = new ModelAndView("member/counselPrivilege2");
 		mav.addObject("lists", lists);
 		return mav;
 	}
-	
+
 	// 관리자 페이지 - 상담사 권한 UP
 	@GetMapping("/admin/privilegeUp")
-	public String privileageUp(HttpServletRequest request) throws Exception{
+	public String privileageUp(HttpServletRequest request) throws Exception {
 		String nextPage = "";
-		String [] check = request.getParameterValues("check");
-		if(check == null) {
+		String[] check = request.getParameterValues("check");
+		if (check == null) {
 			nextPage = "member/upFail";
-		}else {
+		} else {
 			List<String> list = Arrays.asList(check);
 			memberService.privileageUp(list);
 			nextPage = "redirect:/admin/counselPrivilege2";
 		}
 		return nextPage;
 	}
-	
+
 	// 아이디 중복 체크
 	@PostMapping("/checkEmail")
 	@ResponseBody
 	public int checkEmail(@RequestParam("email") String email) throws Exception {
 		return memberService.checkId(email);
 	}
-	
+
 	// 닉네임 중복 체크
 	@PostMapping("/checkName")
 	@ResponseBody
 	public int checkNickname(@RequestParam("name") String name) throws Exception {
 		return memberService.checkNickname(name);
 	}
-	
+
 	// 인증 이메일
 	@PostMapping("/checkMail")
 	@ResponseBody
-	public String sendMail(String email) throws Exception{
-		Random random = new Random();  //난수 생성을 위한 랜덤 클래스
-		String key="";  //인증번호 
+	public String sendMail(String email) throws Exception {
+		Random random = new Random(); // 난수 생성을 위한 랜덤 클래스
+		String key = ""; // 인증번호
 
 		SimpleMailMessage message = new SimpleMailMessage();
-		message.setTo(email); //스크립트에서 보낸 메일을 받을 사용자 이메일 주소 
-		//입력 키를 위한 코드
-		for(int i =0; i<3;i++) {
-			int index=random.nextInt(25)+65; //A~Z까지 랜덤 알파벳 생성
-			key+=(char)index;
+		message.setTo(email); // 스크립트에서 보낸 메일을 받을 사용자 이메일 주소
+		// 입력 키를 위한 코드
+		for (int i = 0; i < 3; i++) {
+			int index = random.nextInt(25) + 65; // A~Z까지 랜덤 알파벳 생성
+			key += (char) index;
 		}
-		int numIndex=random.nextInt(9999)+1000; //4자리 랜덤 정수를 생성
-		key+=numIndex;
+		int numIndex = random.nextInt(9999) + 1000; // 4자리 랜덤 정수를 생성
+		key += numIndex;
 		message.setSubject("인증번호 입력을 위한 메일 전송");
-		message.setText("인증 번호 : "+key);
+		message.setText("인증 번호 : " + key);
 		javaMailSender.send(message);
-        return key;
+		return key;
 	}
 
 	// 에러 처리
