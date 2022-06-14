@@ -38,7 +38,7 @@ public class MemberController {
 	JavaMailSender javaMailSender;
 
 	// 로그인
-	@PostMapping("/login")
+	@PostMapping("/api/login")
 	@ResponseBody
 	public MemberDTO login(HttpSession session, @RequestParam Map<String, String> map) throws Exception {
 		MemberDTO memberDTO = memberService.selectMember(map);

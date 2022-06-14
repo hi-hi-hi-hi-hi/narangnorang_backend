@@ -19,7 +19,7 @@ public class MainController {
 	}
 
 	// 세션 유지 테스트
-	@PostMapping("/home")
+	@PostMapping("/api/home")
 	@ResponseBody
 	public MemberDTO test(HttpSession session) throws Exception {
 		return (MemberDTO) session.getAttribute("login");
