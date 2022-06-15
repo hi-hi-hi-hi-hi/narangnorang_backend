@@ -18,22 +18,24 @@ public class MiniroomController {
 	MiniroomService miniroomService;
 
 	// 홈 (로그인 O)
-//	@GetMapping("/home")
-//	public ModelAndView home(HttpSession session) throws Exception {
+	@ResponseBody
+	@GetMapping("/home")
+	public MyRoomDTO home() throws Exception {
 //		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-//
 //		int id = mDTO.getId();
 //		int privilege = mDTO.getPrivilege();
 //		ModelAndView mav = new ModelAndView("home");
 //		mav.addObject("privilege",privilege);
+		MyRoomDTO myRoomDTO = new MyRoomDTO();
+		int id = 1;
 //		if(privilege == 3){
-//			MyRoomDTO myRoomDTO = miniroomService.selectMyRoom(id);
-//			myRoomDTO.setMemberId(id);
+			myRoomDTO = miniroomService.selectMyRoom(id);
+			myRoomDTO.setMemberId(id);
 //			mav.addObject("myRoomDTO", myRoomDTO);
 //		}
-//
-//		return mav;
-//	}
+
+		return myRoomDTO;
+	}
 
 	@GetMapping("/home/buy")
 	public ModelAndView buy(HttpSession session,
