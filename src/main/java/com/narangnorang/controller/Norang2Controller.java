@@ -34,8 +34,8 @@ public class Norang2Controller {
 	public Map<String, Object> selectChallenge(HttpSession session) throws Exception {
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("flag", false);
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		int memberId = memberDTO.getId();
+		MemberDTO login = (MemberDTO) session.getAttribute("login");
+		int memberId = login.getId();
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String datetime = simpleDateFormat.format(calendar.getTime());
@@ -71,8 +71,8 @@ public class Norang2Controller {
 	public Map<String, Object> selectDailyLog(HttpSession session) throws Exception {
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("flag", false);
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		int memberId = memberDTO.getId();
+		MemberDTO login = (MemberDTO) session.getAttribute("login");
+		int memberId = login.getId();
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String datetime = simpleDateFormat.format(calendar.getTime());
@@ -89,9 +89,9 @@ public class Norang2Controller {
 	public Map<String, Object> selectMoodState(HttpSession session) throws Exception {
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("flag", false);
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		int memberId = memberDTO.getId();
-		String datetime = memberDTO.getDatetime();
+		MemberDTO login = (MemberDTO) session.getAttribute("login");
+		int memberId = login.getId();
+		String datetime = login.getDatetime();
 		MoodStateDTO moodStateDTO = new MoodStateDTO(0, memberId, datetime, 0);
 		moodStateDTO = norang2Service.selectMoodState(moodStateDTO);
 		if (moodStateDTO != null) {
@@ -106,8 +106,8 @@ public class Norang2Controller {
 			ChallengeDTO challengeDTO, @RequestParam("multipartFile") MultipartFile multipartFile) throws Exception {
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("flag", false);
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		int memberId = memberDTO.getId();
+		MemberDTO login = (MemberDTO) session.getAttribute("login");
+		int memberId = login.getId();
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String datetime = simpleDateFormat.format(calendar.getTime());
@@ -128,8 +128,8 @@ public class Norang2Controller {
 	public Map<String, Object> insertDailyLog(HttpSession session, DailyLogDTO dailyLogDTO) throws Exception {
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("flag", false);
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		int memberId = memberDTO.getId();
+		MemberDTO login = (MemberDTO) session.getAttribute("login");
+		int memberId = login.getId();
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String datetime = simpleDateFormat.format(calendar.getTime());
@@ -147,8 +147,8 @@ public class Norang2Controller {
 	public Map<String, Object> insertMoodState(HttpSession session, MoodStateDTO moodStateDTO) throws Exception {
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("flag", false);
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		int memberId = memberDTO.getId();
+		MemberDTO login = (MemberDTO) session.getAttribute("login");
+		int memberId = login.getId();
 		moodStateDTO.setMemberId(memberId);
 		int cnt = norang2Service.insertMoodState(moodStateDTO);
 		if (cnt == 1) {

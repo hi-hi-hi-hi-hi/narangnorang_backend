@@ -48,8 +48,8 @@ public class MyNorangController {
 
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");
 		String datetime = simpleDateFormat.format(calendar.getTime());
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		int memberId = memberDTO.getId();
+		MemberDTO login = (MemberDTO) session.getAttribute("login");
+		int memberId = login.getId();
 		DailyLogDTO dailyLogDTO = new DailyLogDTO(0, memberId, datetime, 0, null);
 		List<DailyLogDTO> dailyLogList = myNorangService.selectDailyLogList(dailyLogDTO);
 
@@ -81,8 +81,8 @@ public class MyNorangController {
 	// 일일 데이터 조회(하루)
 	@GetMapping("/mynorang/dailylog/{datetime}")
 	public ModelAndView selectDailyLog(HttpSession session, @PathVariable String datetime) throws Exception {
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		int memberId = memberDTO.getId();
+		MemberDTO login = (MemberDTO) session.getAttribute("login");
+		int memberId = login.getId();
 		DailyLogDTO dailyLogDTO = new DailyLogDTO(0, memberId, datetime, 0, null);
 		dailyLogDTO = myNorangService.selectDailyLog(dailyLogDTO);
 
@@ -96,8 +96,8 @@ public class MyNorangController {
 	// 일일 데이터 저장
 	@PostMapping("/mynorang/dailylog/{datetime}")
 	public String insertDailyLog(HttpSession session, DailyLogDTO dailyLogDTO) throws Exception {
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		int memberId = memberDTO.getId();
+		MemberDTO login = (MemberDTO) session.getAttribute("login");
+		int memberId = login.getId();
 		dailyLogDTO.setMemberId(memberId);
 		myNorangService.insertDailyLog(dailyLogDTO);
 		return "redirect:/mynorang/success";
@@ -106,8 +106,8 @@ public class MyNorangController {
 	// 일일 데이터 수정
 	@PutMapping("/mynorang/dailylog/{datetime}")
 	public String updateDailyLog(HttpSession session, DailyLogDTO dailyLogDTO) throws Exception {
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		int memberId = memberDTO.getId();
+		MemberDTO login = (MemberDTO) session.getAttribute("login");
+		int memberId = login.getId();
 		dailyLogDTO.setMemberId(memberId);
 		myNorangService.updateDailyLog(dailyLogDTO);
 		return "redirect:/mynorang/success";
@@ -116,8 +116,8 @@ public class MyNorangController {
 	// 일일 데이터 삭제
 	@DeleteMapping("/mynorang/dailylog/{datetime}")
 	public String deleteDailyLog(HttpSession session, DailyLogDTO dailyLogDTO) throws Exception {
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		int memberId = memberDTO.getId();
+		MemberDTO login = (MemberDTO) session.getAttribute("login");
+		int memberId = login.getId();
 		dailyLogDTO.setMemberId(memberId);
 		myNorangService.deleteDailyLog(dailyLogDTO);
 		return "redirect:/mynorang/success";
@@ -154,8 +154,8 @@ public class MyNorangController {
 
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String datetime = simpleDateFormat.format(calendar.getTime());
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		int memberId = memberDTO.getId();
+		MemberDTO login = (MemberDTO) session.getAttribute("login");
+		int memberId = login.getId();
 		MoodStateDTO moodStateDTO = new MoodStateDTO(0, memberId, datetime, 0);
 		List<MoodStateDTO> moodStateList = myNorangService.selectMoodStateList(moodStateDTO);
 		return moodStateList;
@@ -164,8 +164,8 @@ public class MyNorangController {
 	// 챌린지 조회(전체)
 	@GetMapping("/mynorang/challenge")
 	public String selectChallengeList(HttpSession session, Model model) throws Exception {
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		int memberId = memberDTO.getId();
+		MemberDTO login = (MemberDTO) session.getAttribute("login");
+		int memberId = login.getId();
 		List<ChallengeDTO> challengeList = myNorangService.selectChallengeList(memberId);
 		model.addAttribute("challengeList", challengeList);
 		return "mynorang";
