@@ -30,14 +30,14 @@ public class PostController {
 	@Autowired
 	PostService postService;
 	
-	@GetMapping("/post")
-	public String post() throws Exception{
-		return "postList";
-	}
+//	@GetMapping("/post")
+//	public String post() throws Exception{
+//		return "postList";
+//	}
 	
 	// 게시판 목록 보기
 	@ResponseBody
-	@GetMapping("/post/list")
+	@GetMapping("/api/post/list")
 	public HashMap<String, Object> postList(@RequestParam(defaultValue="자유게시판") String category,
 								@RequestParam(defaultValue="1") int p,
 								@RequestParam(defaultValue="0") int likes) throws Exception{
@@ -63,7 +63,7 @@ public class PostController {
 	
 	// 글 검색
 	@ResponseBody
-	@GetMapping("/post/search")
+	@GetMapping("/api/post/search")
 	public HashMap<String, Object> search(@RequestParam(defaultValue="1") int p,
 								String searchCol, String keyword, String category) throws Exception{
 		HashMap<String, Object> map = new HashMap<>();
