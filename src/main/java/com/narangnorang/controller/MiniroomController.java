@@ -22,7 +22,6 @@ public class MiniroomController {
 	@GetMapping("/home")
 	public MyRoomDTO home() throws Exception {
 //		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-
 //		int id = mDTO.getId();
 //		int privilege = mDTO.getPrivilege();
 //		ModelAndView mav = new ModelAndView("home");
