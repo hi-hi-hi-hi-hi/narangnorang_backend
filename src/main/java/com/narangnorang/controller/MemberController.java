@@ -16,12 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -29,7 +24,7 @@ import com.narangnorang.dto.MemberDTO;
 import com.narangnorang.service.MemberService;
 import com.narangnorang.service.MessageService;
 
-@Controller
+@RestController
 public class MemberController {
 
 	@Autowired
@@ -37,17 +32,6 @@ public class MemberController {
 	@Autowired
 	JavaMailSender javaMailSender;
 
-	// 메인 (로그인 X)
-	@GetMapping("/main")
-	public String main() throws Exception {
-		return "main";
-	}
-
-	// 로그인 폼
-	@GetMapping("/login")
-	public String loginForm() throws Exception {
-		return "member/loginForm";
-	}
 
 	// 로그인 처리
 	@PostMapping("/login")
@@ -75,45 +59,22 @@ public class MemberController {
 	public String sessionInvalidate() throws Exception {
 		return "common/sessionInvalidate";
 	}
-	
-	// 회원가입 폼
-	@GetMapping("/signUp")
-	public String memberForm() throws Exception {
-		return "member/signUpForm";
-	}
-	
-	// 일반 회원가입 폼
-	@GetMapping("/generalSignUp")
-	public String generalSignUpForm() throws Exception {
-		return "member/generalSignUpForm";
-	}
-	
-	// 상담사 회원가입 폼
-	@GetMapping("/counselorSignUp")
-	public String counselorSignUpForm() throws Exception {
-		return "member/counselorSignUpForm";
-	}
+
 	
 	// 일반회원가입 처리
-	@PostMapping("/generalSignUp")
-	public String insertGeneral(MemberDTO memberDTO) throws Exception {
-		memberService.generalSignUp(memberDTO);
-		return "member/loginForm";
+	@PostMapping("/api/generalSignUp")
+	public int insertGeneral(MemberDTO memberDTO) throws Exception {
+		return memberService.generalSignUp(memberDTO);
 	}
 	
 	// 상담사 회원가입 처리
-	@PostMapping("/counselorSignUp")
-	public String insertCounselor(MemberDTO memberDTO) throws Exception {
-		memberService.counselorSignUp(memberDTO);
-		return "member/loginForm";
-	}
+//	@PostMapping("/counselorSignUp")
+//	public String insertCounselor(MemberDTO memberDTO) throws Exception {
+//		memberService.counselorSignUp(memberDTO);
+//		return "member/loginForm";
+//	}
 	
-	// 비번찾기 폼
-	@GetMapping("/findPw")
-	public String findPw() throws Exception {
-		return "member/findPwForm";
-	}
-	
+
 	// 새 비번 폼
 	@PostMapping("/findPw")
 	public String newPwForm(HttpSession session, @RequestParam("email") String email) throws Exception {
@@ -139,12 +100,6 @@ public class MemberController {
 		return memberService.newPw(memberDTO);
 	}
 	
-	// mypage 폼
-	@GetMapping("/mypage")
-	public String mypage() throws Exception {
-		return "mypage";
-	}
-	
 	// mypage 비번 재확인 및 privilege에 따른 폼 분리
 	@PostMapping("/mypage2")
 	@ResponseBody
@@ -164,12 +119,7 @@ public class MemberController {
 		}
 	}
 	
-	// mypage 개인정보 수정 화면
-	@GetMapping("/mypage/edit")
-	public String edit() throws Exception {
-		return "mypageEdit";
-	}
-	
+
 	// 일반회원 정보 수정
 	@PutMapping("/generalEdit")
 	public String generalEdit(HttpSession session, MemberDTO memberDTO) throws Exception {
@@ -272,23 +222,22 @@ public class MemberController {
 	}
 	
 	// 아이디 중복 체크
-	@PostMapping("/checkEmail")
-	@ResponseBody
-	public int checkEmail(@RequestParam("email") String email) throws Exception {
+	@PostMapping("/api/checkEmail")
+	public int checkEmail(@RequestParam String email) throws Exception {
 		return memberService.checkId(email);
 	}
 	
 	// 닉네임 중복 체크
-	@PostMapping("/checkName")
+	@PostMapping("/api/checkName")
 	@ResponseBody
-	public int checkNickname(@RequestParam("name") String name) throws Exception {
+	public int checkNickname(@RequestParam String name) throws Exception {
 		return memberService.checkNickname(name);
 	}
 	
 	// 인증 이메일
-	@PostMapping("/checkMail")
-	@ResponseBody
-	public String sendMail(String email) throws Exception{
+	@PostMapping("/api/sendMail")
+	public String sendMail(@RequestBody MemberDTO memberDTO) throws Exception{
+		String email = memberDTO.getEmail();
 		Random random = new Random();  //난수 생성을 위한 랜덤 클래스
 		String key="";  //인증번호 
 
@@ -310,7 +259,7 @@ public class MemberController {
 	// 에러 처리
 	@ExceptionHandler({ Exception.class })
 	public String error() throws Exception {
-		return "common/error";
+		return "error";
 	}
 
 }
