@@ -12,7 +12,7 @@
 		]]>
 	</select>
 
-	<select id="selectAllWishItems" resultType="ItemDTO" parameterType="hashmap">
+	<select id="selectAllWishItems" resultType="ItemDTO" parameterType="int">
 	<![CDATA[
 		select i.id, i.category, i.name, i.price
 		from ITEM i
