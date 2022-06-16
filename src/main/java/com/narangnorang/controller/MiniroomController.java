@@ -19,7 +19,7 @@ public class MiniroomController {
 
 	// 홈 (로그인 O)
 	@ResponseBody
-	@GetMapping("/home")
+	@GetMapping("/api/home")
 	public MyRoomDTO home() throws Exception {
 //		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
 //		int id = mDTO.getId();
@@ -27,78 +27,62 @@ public class MiniroomController {
 //		ModelAndView mav = new ModelAndView("home");
 //		mav.addObject("privilege",privilege);
 		MyRoomDTO myRoomDTO = new MyRoomDTO();
-		int id = 1;
+		int id = 104;
 //		if(privilege == 3){
 			myRoomDTO = miniroomService.selectMyRoom(id);
-			myRoomDTO.setMemberId(id);
 //			mav.addObject("myRoomDTO", myRoomDTO);
 //		}
 
 		return myRoomDTO;
 	}
 
-	@GetMapping("/home/buy")
-	public ModelAndView buy(HttpSession session,
-							@RequestParam(value="category",required=false,defaultValue="bed") String category
+	@GetMapping("/api/home/buy")
+	@ResponseBody
+	public HashMap<String, Object> buy(@RequestParam(value="category",required=false,defaultValue="bed") String category
 	) throws Exception {
 
+		HashMap<String, Object> result = new HashMap<>();
 		List<ItemDTO> list =  miniroomService.selectAllItems(category);
-		MemberDTO mDto = (MemberDTO)session.getAttribute("login");
-
-		ModelAndView mav = new ModelAndView("homeBuy");
-
-		int id = mDto.getId();
+		int id = 104;
 		MyRoomDTO myRoomDTO = miniroomService.selectMyRoom(id);
 		myRoomDTO.setMemberId(id);
-		mav.addObject("itemList",list);
-		mav.addObject("memberId",id);
-		mav.addObject("myRoomDTO", myRoomDTO);
+		result.put("itemList",list);
+		result.put("memberId",id);
 
-		return mav;
+		return result;
 	}
 
-	@GetMapping("/home/style")
-	public ModelAndView style(HttpSession session,
-							  @RequestParam(value="category",required=false,defaultValue="bed") String category
+	@GetMapping("/api/home/style")
+	@ResponseBody
+	public HashMap<String, Object> style(@RequestParam(value="category",required=false,defaultValue="bed") String category
 	) throws Exception {
 
 		HashMap<String, Object> map = new HashMap<>();
-		MemberDTO mDto = (MemberDTO)session.getAttribute("login");
-		int id = mDto.getId();
+		HashMap<String, Object> result = new HashMap<>();
+		int id = 104;
 
 		List<ItemDTO> itemList =  miniroomService.selectAllItems(category);
-		ModelAndView mav = new ModelAndView("homeStyle");
-
-		MyRoomDTO myRoomDTO = miniroomService.selectMyRoom(id);
-		myRoomDTO.setMemberId(id);
 		map.put("category", category);
 		map.put("id",id);
 		List<MyItemDTO> myItemList =  miniroomService.selectAllMyItems(map);
-		mav.addObject("myItemList",myItemList);
-		mav.addObject("itemList",itemList);
-		mav.addObject("myRoomDTO", myRoomDTO);
-		mav.addObject("memberId",id);
-		return mav;
+		result.put("myItemList",myItemList);
+		result.put("itemList",itemList);
+		result.put("memberId",id);
+		return result;
 	}
 
-	@GetMapping("/home/wish")
-	public ModelAndView wish(HttpSession session) throws Exception {
+	@GetMapping("/api/home/wish")
+	@ResponseBody
+	public HashMap<String, Object> wish() throws Exception {
 
 		HashMap<String,Object> map = new HashMap<>();
+		HashMap<String,Object> result = new HashMap<>();
+		int id = 104;
+		List<ItemDTO> list =  miniroomService.selectAllWishItems(id);
+		result.put("wishItemList",list);
+		result.put("memberId",id);
 
-		MemberDTO mDto = (MemberDTO)session.getAttribute("login");
-		ModelAndView mav = new ModelAndView("homeWish");
-
-		int id = mDto.getId();
-		map.put("id",id);
-		List<ItemDTO> list =  miniroomService.selectAllWishItems(map);
-		MyRoomDTO myRoomDTO = miniroomService.selectMyRoom(id);
-		myRoomDTO.setMemberId(id);
-		mav.addObject("wishItemList",list);
-		mav.addObject("memberId",id);
-		mav.addObject("myRoomDTO", myRoomDTO);
-
-		return mav;
+		return result;
 	}
 
 	//물건 구매

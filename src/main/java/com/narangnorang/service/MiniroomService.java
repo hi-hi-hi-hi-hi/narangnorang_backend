@@ -16,7 +16,7 @@ public interface MiniroomService {
 	public List<MyItemDTO> selectAllMyItems(HashMap<String, Object> map);
 	public MyRoomDTO selectMyRoom(int id);
 	public int wishZero(HashMap<String, Object> map);
-	public List<ItemDTO> selectAllWishItems(HashMap<String, Object> map);
+	public List<ItemDTO> selectAllWishItems(int id);
 
 
 

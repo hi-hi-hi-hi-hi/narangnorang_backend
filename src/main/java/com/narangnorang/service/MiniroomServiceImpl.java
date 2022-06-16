@@ -71,7 +71,7 @@ public class MiniroomServiceImpl implements MiniroomService {
 	}
 
 	@Override
-	public List<ItemDTO> selectAllWishItems(HashMap<String, Object> map) {
-		return miniroomDAO.selectAllWishItems(map);
+	public List<ItemDTO> selectAllWishItems(int id) {
+		return miniroomDAO.selectAllWishItems(id);
 	}
 }

@@ -54,7 +54,7 @@ public class MiniroomDAO {
 	public int wishZero(HashMap<String, Object> map) {
 		return sqlSession.update("com.config.MiniroomMapper.wishZero", map);
 	}
-	public List<ItemDTO> selectAllWishItems(HashMap<String, Object> map) {
-		return sqlSession.selectList("com.config.MiniroomMapper.selectAllWishItems",map);
+	public List<ItemDTO> selectAllWishItems(int id) {
+		return sqlSession.selectList("com.config.MiniroomMapper.selectAllWishItems",id);
 	}
 }
