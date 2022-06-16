@@ -37,7 +37,7 @@ public class PostController {
 	
 	// 게시판 목록 보기
 	@ResponseBody
-	@GetMapping("/post/list")
+	@GetMapping("/api/post/list")
 	public HashMap<String, Object> postList(@RequestParam(defaultValue="자유게시판") String category,
 								@RequestParam(defaultValue="1") int p,
 								@RequestParam(defaultValue="0") int likes) throws Exception{
