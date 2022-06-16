@@ -86,14 +86,14 @@ public class PostController {
 	
 	// 댓글 목록
 	@ResponseBody
-	@GetMapping("/post/reply/{id}")
+	@GetMapping("/api/post/reply/{id}")
 	public List<ReplyDTO> replyList(@PathVariable int id) throws Exception{
 		List<ReplyDTO> replyList = postService.selectAllReply(id);
 		return replyList;
 	}
 
 	// 자세히 보기
-	@GetMapping("/post/{id}")
+	@GetMapping("/api/post/{id}")
 	public ModelAndView postRetrieve(@PathVariable int id) throws Exception{
 		PostDTO pDto = postService.selectById(id);
 		List<ReplyDTO> replyList = postService.selectAllReply(id);
@@ -104,16 +104,16 @@ public class PostController {
 	}
 	
 
-	// 글쓰기 페이지
-	@GetMapping("/post/write")
-	public ModelAndView postWrite(String category) throws Exception{
-		ModelAndView mav = new ModelAndView("postWrite");
-		mav.addObject("category", category);
-		return mav;
-	}
+//	// 글쓰기 페이지
+//	@GetMapping("/post/write")
+//	public ModelAndView postWrite(String category) throws Exception{
+//		ModelAndView mav = new ModelAndView("postWrite");
+//		mav.addObject("category", category);
+//		return mav;
+//	}
 
 	// 글 등록
-	@PostMapping("/post/write")
+	@PostMapping("/api/post/write")
 	public ModelAndView postWritePro(PostDTO pDto, HttpSession session) throws Exception{
 		ModelAndView mav = new ModelAndView("post/postWriteSuccess");
 		MemberDTO mDto = (MemberDTO)session.getAttribute("login");
