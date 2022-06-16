@@ -113,7 +113,7 @@ public class PostController {
 //	}
 
 	// 글 등록
-	@PostMapping("/post/write")
+	@PostMapping("/api/post/write")
 	public ModelAndView postWritePro(PostDTO pDto, HttpSession session) throws Exception{
 		ModelAndView mav = new ModelAndView("post/postWriteSuccess");
 		MemberDTO mDto = (MemberDTO)session.getAttribute("login");
