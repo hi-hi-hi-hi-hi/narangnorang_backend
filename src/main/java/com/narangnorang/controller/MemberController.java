@@ -1,6 +1,7 @@
 package com.narangnorang.controller;
 
 import java.io.File;
+import java.lang.reflect.Member;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +69,13 @@ public class MemberController {
 	public int insertCounselor(MemberDTO memberDTO) throws Exception {
 		return memberService.counselorSignUp(memberDTO);
 	}
-	
+
+	// 로그인 세션 불러오기
+	@GetMapping("/api/loginSession")
+	@ResponseBody
+	public MemberDTO mypage(HttpSession session) throws Exception {
+		return (MemberDTO) session.getAttribute("login");
+	}
 
 //	// 새 비번 폼
 //	@PostMapping("/findPw")
@@ -98,38 +105,38 @@ public class MemberController {
 //	}
 
 	// mypage 비번 재확인 및 privilege에 따른 폼 분리
-	@PostMapping("/mypage2")
-	@ResponseBody
-	public String mypagePwChek(HttpSession session, @RequestParam String password) throws Exception {
-		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-		String passwordCompare = mDTO.getPassword();
-		int privilege = mDTO.getPrivilege();
-		if (!passwordCompare.equals(password)) {
-			System.out.println("1");
-			return "/narangnorang/mypage";
-		} else if (privilege == 0) {
-			System.out.println(2);
-			return "/narangnorang/admin";
-		} else {
-			System.out.println(3);
-			return "/narangnorang/mypage/edit";
-		}
-	}
+//	@PostMapping("/mypage2")
+//	@ResponseBody
+//	public String mypagePwChek(HttpSession session, @RequestParam String password) throws Exception {
+//		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
+//		String passwordCompare = mDTO.getPassword();
+//		int privilege = mDTO.getPrivilege();
+//		if (!passwordCompare.equals(password)) {
+//			System.out.println("1");
+//			return "/narangnorang/mypage";
+//		} else if (privilege == 0) {
+//			System.out.println(2);
+//			return "/narangnorang/admin";
+//		} else {
+//			System.out.println(3);
+//			return "/narangnorang/mypage/edit";
+//		}
+//	}
 
 	// 일반회원 정보 수정
-//	@PutMapping("/generalEdit")
-//	public String generalEdit(HttpSession session, MemberDTO memberDTO) throws Exception {
-//		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-//		memberDTO.setId(mDTO.getId());
-//		memberDTO.setPassword(mDTO.getPassword());
-//		memberDTO.setPrivilege(mDTO.getPrivilege());
-//		memberDTO.setDatetime(mDTO.getDatetime());
-//		memberDTO.setPhoto(mDTO.getPhoto());
-//		memberDTO.setPoint(mDTO.getPoint());
-//		memberService.generalEdit(memberDTO);
-//		session.setAttribute("login", memberDTO);
-//		return "redirect:/mypage/edit";
-//	}
+	@PutMapping("/api/generalEdit")
+	@ResponseBody
+	public int generalEdit(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
+		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
+		memberDTO.setId(mDTO.getId());
+		memberDTO.setPassword(mDTO.getPassword());
+		memberDTO.setPrivilege(mDTO.getPrivilege());
+		memberDTO.setDatetime(mDTO.getDatetime());
+		memberDTO.setPhoto(mDTO.getPhoto());
+		memberDTO.setPoint(mDTO.getPoint());
+		session.setAttribute("login", memberDTO);
+		return memberService.generalEdit(memberDTO);
+	}
 
 	// 상담사회원 정보 수정
 //	@PutMapping("/counselorEdit")
@@ -220,15 +227,16 @@ public class MemberController {
 
 	// 아이디 중복 체크
 	@PostMapping("/api/checkEmail")
-	public int checkEmail(@RequestParam String email) throws Exception {
-		return memberService.checkId(email);
+	@ResponseBody
+	public int checkEmail(@RequestBody MemberDTO dto) throws Exception {
+		return memberService.checkId(dto.getEmail());
 	}
 
 	// 닉네임 중복 체크
 	@PostMapping("/api/checkName")
 	@ResponseBody
-	public int checkNickname(@RequestParam String name) throws Exception {
-		return memberService.checkNickname(name);
+	public int checkNickname(@RequestBody MemberDTO dto) throws Exception {
+		return memberService.checkNickname(dto.getName());
 	}
 
 	// 인증 이메일
