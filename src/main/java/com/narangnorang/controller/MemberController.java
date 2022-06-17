@@ -139,17 +139,18 @@ public class MemberController {
 	}
 
 	// 상담사회원 정보 수정
-//	@PutMapping("/counselorEdit")
-//	public String counselorEdit(HttpSession session, MemberDTO memberDTO) throws Exception {
-//		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-//		memberDTO.setId(mDTO.getId());
-//		memberDTO.setPassword(mDTO.getPassword());
-//		memberDTO.setPrivilege(mDTO.getPrivilege());
-//		memberDTO.setDatetime(mDTO.getDatetime());
-//		memberDTO.setPhoto(mDTO.getPhoto());
-//		memberService.counselorEdit(memberDTO);
-//		return "redirect:/mypage/edit";
-//	}
+	@PutMapping("/api/counselorEdit")
+	@ResponseBody
+	public int counselorEdit(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
+		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
+		memberDTO.setId(mDTO.getId());
+		memberDTO.setPassword(mDTO.getPassword());
+		memberDTO.setPrivilege(mDTO.getPrivilege());
+		memberDTO.setDatetime(mDTO.getDatetime());
+		memberDTO.setPhoto(mDTO.getPhoto());
+		session.setAttribute("login", memberDTO);
+		return memberService.counselorEdit(memberDTO);
+	}
 
 	// 프로필 사진 수정
 //	@PutMapping("/photoUpdate")
