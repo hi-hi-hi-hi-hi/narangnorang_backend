@@ -84,14 +84,6 @@ public class PostController {
 		return result;
 	}
 	
-	// 댓글 목록
-	@ResponseBody
-	@GetMapping("/api/post/reply/{id}")
-	public List<ReplyDTO> replyList(@PathVariable int id) throws Exception{
-		List<ReplyDTO> replyList = postService.selectAllReply(id);
-		return replyList;
-	}
-
 	// 자세히 보기
 	@GetMapping("/api/post/{id}")
 	public ModelAndView postRetrieve(@PathVariable int id) throws Exception{
@@ -101,6 +93,14 @@ public class PostController {
 		mav.addObject("retrieve", pDto);
 		mav.addObject("replyList", replyList);
 		return mav;
+	}
+	
+	// 댓글 목록
+	@ResponseBody
+	@GetMapping("/api/post/reply/{id}")
+	public List<ReplyDTO> replyList(@PathVariable int id) throws Exception{
+		List<ReplyDTO> replyList = postService.selectAllReply(id);
+		return replyList;
 	}
 	
 
@@ -114,17 +114,14 @@ public class PostController {
 
 	// 글 등록
 	@PostMapping("/api/post/write")
-	public ModelAndView postWritePro(PostDTO pDto, HttpSession session) throws Exception{
-		ModelAndView mav = new ModelAndView("post/postWriteSuccess");
+	public int postWritePro(PostDTO pDto, HttpSession session) throws Exception{
 		MemberDTO mDto = (MemberDTO)session.getAttribute("login");
 
 		pDto.setMemberId(mDto.getId());
 		pDto.setMemberName(mDto.getName());
 		pDto.setMemberPrivilege(mDto.getPrivilege());
 
-		mav.addObject("category", pDto.getCategory());
-		int result = postService.insert(pDto);
-		return mav;
+		return postService.insert(pDto);
 	}
 	
 	// 게시글 삭제
