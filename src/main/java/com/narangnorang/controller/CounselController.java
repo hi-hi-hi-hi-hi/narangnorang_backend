@@ -1,21 +1,18 @@
 package com.narangnorang.controller;
 
 import java.util.HashMap;
-import java.util.List;
-
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.narangnorang.dto.MemberDTO;
 import com.narangnorang.service.CounselService;
 
-@Controller
+@RestController
 public class CounselController {
 	
 	@Autowired
@@ -25,20 +22,17 @@ public class CounselController {
 	@GetMapping("/api/counsel/list")
 	public HashMap<String, Object> selectCounselorList() throws Exception {
 		HashMap<String, Object> result = new HashMap<>();
-		result.put("counselorDTO", counselService.selectCounselorList());
+		result.put("counselorList", counselService.selectCounselorList());
 		return result;
 	}
 	
-	@GetMapping("/counsel/centerMap")
-	public ModelAndView getUserRegion(HttpSession session) throws Exception {
-		ModelAndView mav = new ModelAndView();
+	@ResponseBody
+	@GetMapping("/api/counsel/userRegion")
+	public HashMap<String, Object> getUserRegion(HttpSession session) throws Exception {
+		HashMap<String, Object> result = new HashMap<>();
 		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		if(memberDTO != null) {
-			mav.setViewName("counsel");
-			mav.addObject("userRegion", memberDTO.getRegion());
-		} else {
-			mav.setViewName("common/sessionInvalidate");
-		}
-		return mav;
+		result.put("userRegion", memberDTO.getRegion());
+		
+		return result;
 	}
 }
