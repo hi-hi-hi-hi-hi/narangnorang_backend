@@ -33,7 +33,6 @@ public class MemberController {
 	@Autowired
 	JavaMailSender javaMailSender;
 
-
 	// 로그인
 	@PostMapping("/api/login")
 	@ResponseBody
@@ -83,7 +82,7 @@ public class MemberController {
 //	public int newPw(MemberDTO memberDTO) throws Exception {
 //		return memberService.newPw(memberDTO);
 //	}
-//
+
 	// 새 비번 변경
 	@PutMapping("/api/myPage/newPw")
 	@ResponseBody
@@ -107,25 +106,6 @@ public class MemberController {
 		session.setAttribute("login", memberDTO);
 		return memberService.newPw(memberDTO);
 	}
-
-	// mypage 비번 재확인 및 privilege에 따른 폼 분리
-//	@PostMapping("/mypage2")
-//	@ResponseBody
-//	public String mypagePwChek(HttpSession session, @RequestParam String password) throws Exception {
-//		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-//		String passwordCompare = mDTO.getPassword();
-//		int privilege = mDTO.getPrivilege();
-//		if (!passwordCompare.equals(password)) {
-//			System.out.println("1");
-//			return "/narangnorang/mypage";
-//		} else if (privilege == 0) {
-//			System.out.println(2);
-//			return "/narangnorang/admin";
-//		} else {
-//			System.out.println(3);
-//			return "/narangnorang/mypage/edit";
-//		}
-//	}
 
 	// 일반회원 정보 수정
 	@PutMapping("/api/generalEdit")
@@ -157,28 +137,28 @@ public class MemberController {
 	}
 
 	// 프로필 사진 수정
-//	@PutMapping("/photoUpdate")
-//	public String photoUpdate(HttpSession session, MemberDTO memberDTO, @RequestParam("filename") MultipartFile mFile)
-//			throws Exception {
-//		String uploadPath = "C:/bootstudy/sts-bundle/sts-3.9.14.RELEASE/project/HighFive/NarangNorang/src/main/resources/static/images/member/";
-//		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-//		try {
-//			if (mDTO.getPhoto() != null) {
-//				File file = new File(uploadPath + mDTO.getPhoto());
-//				file.delete();
-//			}
-//			String newName = mFile.getOriginalFilename();
-//			newName = String.valueOf(mDTO.getId());
-//			mFile.transferTo(new File(uploadPath + newName + ".png"));
-//
-//			mDTO.setPhoto(newName);
-//			memberService.photoUpdate(memberDTO);
-//			session.setAttribute("login", mDTO);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return "redirect:/mypage/edit";
-//	}
+	@PutMapping("/api/photoUpdate")
+	public int photoUpdate(HttpSession session, @RequestParam MultipartFile mFile) throws Exception {
+		String uploadPath = "C:/HighFive/narangnorang_frontend/src/assets/member/";
+		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
+		System.out.println(mFile);
+		int cnt = 0;
+		try {
+			if (mDTO.getPhoto() != null) {
+				File file = new File(uploadPath + mDTO.getPhoto());
+				file.delete();
+			}
+			String newName = String.valueOf(mDTO.getId());
+			mFile.transferTo(new File(uploadPath + newName + ".png"));
+
+			mDTO.setPhoto(newName);
+			cnt = memberService.photoUpdate(mDTO);
+			session.setAttribute("login", mDTO);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return cnt;
+	}
 
 	// 관리자 페이지 - 회원 관리
 //	@GetMapping(value = "/admin")
