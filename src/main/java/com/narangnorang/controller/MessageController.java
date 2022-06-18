@@ -17,110 +17,101 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.narangnorang.dto.MemberDTO;
 import com.narangnorang.dto.MessageDTO;
 import com.narangnorang.service.MessageService;
 
-
-@Controller
+@RestController
 public class MessageController {
 
 	@Autowired
 	MessageService messageService;
 
 	@GetMapping("/message")
-	@ModelAttribute("messageList")
-	public ModelAndView selectMessageList(HttpSession session) throws Exception {
+	public Map<String, Object> selectMessageList(HttpSession session) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
 		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		ModelAndView mav = new ModelAndView();
-		
-		if (memberDTO != null) {
-			int userId = memberDTO.getId();
-			mav.setViewName("message");
 
-			List<MessageDTO> messageList = messageService.selectMessageList(userId);
-			Iterator<MessageDTO> iter = messageList.iterator();
-			List<Integer> otherUsers = new ArrayList<Integer>();
-			
-			while (iter.hasNext()) {
-				MessageDTO messageDTO = iter.next();
-				// 만약 이미 대화방이 표시된 사용자면 제거
-				if (otherUsers.contains(messageDTO.getSenderId()) || otherUsers.contains(messageDTO.getRecieverId())) {
-					iter.remove();
-				} else {
-					// sender/reciever가 본인이 아닌 경우 리스트 추가
-					if (userId != messageDTO.getSenderId()) {
-						otherUsers.add(messageDTO.getSenderId());
-					}
-					if (userId != messageDTO.getRecieverId()) {
-						otherUsers.add(messageDTO.getRecieverId());
-					}
+		int userId = memberDTO.getId();
+
+		List<MessageDTO> messageList = messageService.selectMessageList(userId);
+		Iterator<MessageDTO> iter = messageList.iterator();
+		List<Integer> otherUsers = new ArrayList<Integer>();
+
+		while (iter.hasNext()) {
+			MessageDTO messageDTO = iter.next();
+			// 만약 이미 대화방이 표시된 사용자면 제거
+			if (otherUsers.contains(messageDTO.getSenderId()) || otherUsers.contains(messageDTO.getRecieverId())) {
+				iter.remove();
+			} else {
+				// sender/reciever가 본인이 아닌 경우 리스트 추가
+				if (userId != messageDTO.getSenderId()) {
+					otherUsers.add(messageDTO.getSenderId());
+				}
+				if (userId != messageDTO.getRecieverId()) {
+					otherUsers.add(messageDTO.getRecieverId());
 				}
 			}
-			mav.addObject("messageList", messageList);
-			mav.addObject("userId", userId);
-		} else {
-			mav.setViewName("common/sessionInvalidate");
 		}
-		return mav;
-	}
-
-	@GetMapping("/message/counsel")
-	public ModelAndView popupMessageForm(@RequestParam Map<String, String> counselor) throws Exception {
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName("/message/messageForm");
-		mav.addObject("counselor", counselor);
-		return mav;
+		
+		result.put("messageList", messageList);
+		result.put("userId", userId);
+		
+		return result;
 	}
 
 	@PostMapping("/message/counsel")
-	public String sendMessageToCounselor(HttpSession session, @RequestParam Map<String, Object> messageInfo)
-			throws Exception {
+	public Map<String, Object> sendMessageToCounselor(HttpSession session, @RequestParam Map<String, Object> messageInfo) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
 		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
+		
 		messageInfo.put("senderId", memberDTO.getId());
 		messageInfo.put("senderName", memberDTO.getName());
 		messageInfo.put("senderPrivilege", memberDTO.getPrivilege());
-		messageService.sendMessage(messageInfo);
-		return "home";
-	}
-	
-	@GetMapping("/message/chats/{otherId}")
-	public ModelAndView popupChats(HttpSession session, @PathVariable @ModelAttribute String otherId) throws Exception{
-		ModelAndView mav = new ModelAndView();
-		Map<String, Object> map = new HashMap<String, Object>();
 		
+		result.put("result", messageService.sendMessage(messageInfo));
+		
+		return result;
+	}
+
+	@GetMapping("/message/chats/{otherId}")
+	public Map<String, Object> popupChats(HttpSession session, @PathVariable @ModelAttribute String otherId) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
+
 		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
 		int userId = memberDTO.getId();
-		
+
 		map.put("userId", userId);
 		map.put("otherId", otherId);
+
+		result.put("chats", messageService.getChats(map));
 		
-		mav.setViewName("/message/chats");
-		mav.addObject("chats", messageService.getChats(map));
-		return mav;
+		return result;
 	}
-	
-	@ResponseBody
+
 	@PostMapping("/message/send")
 	public Map<String, Object> sendMessage(@RequestBody Map<String, Object> messageInfo) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
-		int sended = messageService.sendMessage(messageInfo);
 		
-		if(sended == 1) {
-			result.put("result", "ok");
-		}
+		result.put("result", messageService.sendMessage(messageInfo));
+		
 		return result;
 	}
-	
+
 	@GetMapping("/message/unread")
-	@ResponseBody
 	public Map<String, Object> countUnread(HttpSession session) throws Exception {
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
-		int userId = memberDTO.getId();
 		Map<String, Object> result = new HashMap<String, Object>();
-		result.put("unreadCounts", messageService.countUnread(userId));
+		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
+		
+		int userId = memberDTO.getId();
+		int unreadCounts = messageService.countUnread(userId);
+		
+		result.put("unreadCounts", unreadCounts);
+		
 		return result;
 	}
 }
