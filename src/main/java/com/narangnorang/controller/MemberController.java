@@ -77,20 +77,6 @@ public class MemberController {
 		return (MemberDTO) session.getAttribute("login");
 	}
 
-//	// 새 비번 폼
-//	@PostMapping("/findPw")
-//	public String newPwForm(HttpSession session, @RequestParam("email") String email) throws Exception {
-//		MemberDTO memberDTO = memberService.selectByEmail(email);
-//		session.setAttribute("findPw", memberDTO);
-//		return "member/newPwForm";
-//	}
-
-//	@GetMapping("/myPage/newPwForm")
-//	public String myPageNewPwForm(HttpSession session) throws Exception {
-//		session.getAttribute("login");
-//		return "member/myPageNewPwForm";
-//	}
-
 	// 새 비번 변경
 //	@PutMapping("/newPw")
 //	@ResponseBody
@@ -98,11 +84,29 @@ public class MemberController {
 //		return memberService.newPw(memberDTO);
 //	}
 //
-//	@PutMapping("/myPage/newPw")
-//	@ResponseBody
-//	public int myPageNewPw(MemberDTO memberDTO) throws Exception {
-//		return memberService.newPw(memberDTO);
-//	}
+	// 새 비번 변경
+	@PutMapping("/api/myPage/newPw")
+	@ResponseBody
+	public int myPageNewPw(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
+		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
+		memberDTO.setId(mDTO.getId());
+		memberDTO.setEmail(mDTO.getEmail());
+		memberDTO.setPrivilege(mDTO.getPrivilege());
+		memberDTO.setName(mDTO.getName());
+		memberDTO.setPhone(mDTO.getPhone());
+		memberDTO.setDatetime(mDTO.getDatetime());
+		memberDTO.setPhoto(mDTO.getPhoto());
+		memberDTO.setRegion(mDTO.getRegion());
+		memberDTO.setPoint(mDTO.getPoint());
+		memberDTO.setZipcode(mDTO.getZipcode());
+		memberDTO.setAddress1(mDTO.getAddress1());
+		memberDTO.setAddress2(mDTO.getAddress2());
+		memberDTO.setAddress3(mDTO.getAddress3());
+		memberDTO.setJob(mDTO.getJob());
+		memberDTO.setIntroduction(mDTO.getIntroduction());
+		session.setAttribute("login", memberDTO);
+		return memberService.newPw(memberDTO);
+	}
 
 	// mypage 비번 재확인 및 privilege에 따른 폼 분리
 //	@PostMapping("/mypage2")
