@@ -2,10 +2,7 @@ package com.narangnorang.controller;
 
 import java.io.File;
 import java.lang.reflect.Member;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -161,29 +158,22 @@ public class MemberController {
 	}
 
 	// 관리자 페이지 - 회원 관리
-//	@GetMapping(value = "/admin")
-//	@ResponseBody
-//	public ModelAndView getAllLists() throws Exception {
-//		List<MemberDTO> lists = memberService.selectAll();
-//		ModelAndView mav = new ModelAndView("member/adminEdit");
-//		mav.addObject("lists", lists);
-//		return mav;
-//	}
+	@GetMapping(value = "/api/memberManagement")
+	@ResponseBody
+	public HashMap<String, Object> getAllLists() throws Exception {
+		HashMap<String, Object> result = new HashMap<>();
+		result.put("memberDTO", memberService.selectAll());
+		return result;
+	}
 
 	// 관리자 페이지 - 선택 계정 삭제
-//	@GetMapping("/admin/delMember")
-//	public String delMember(HttpServletRequest request) throws Exception {
-//		String nextPage = "";
-//		String[] check = request.getParameterValues("check");
-//		if (check == null) {
-//			nextPage = "member/delFail";
-//		} else {
-//			List<String> list = Arrays.asList(check);
-//			memberService.delSelected(list);
-//			nextPage = "redirect:/admin";
-//		}
-//		return nextPage;
-//	}
+	@DeleteMapping("/api/delMember")
+	@ResponseBody
+	public int delMember(@RequestParam Map<String, String> map) throws Exception {
+		Collection coll = map.values();
+		List<String> list = new ArrayList<String>(coll);
+		return memberService.delSelected(list);
+	}
 
 	// 관리자 페이지 - 상담사 권한 관리
 //	@GetMapping("/admin/counselPrivilege2")
