@@ -1,26 +1,19 @@
 package com.narangnorang.controller;
 
 import java.io.File;
-import java.lang.reflect.Member;
 import java.util.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.narangnorang.dto.MyRoomDTO;
-import com.narangnorang.service.MiniroomService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.narangnorang.dto.MemberDTO;
 import com.narangnorang.service.MemberService;
-import com.narangnorang.service.MessageService;
 
 @Controller
 public class MemberController {
@@ -176,29 +169,22 @@ public class MemberController {
 	}
 
 	// 관리자 페이지 - 상담사 권한 관리
-//	@GetMapping("/admin/counselPrivilege2")
-//	@ResponseBody
-//	public ModelAndView getPrivileage2() throws Exception {
-//		List<MemberDTO> lists = memberService.selectByPrivileage2();
-//		ModelAndView mav = new ModelAndView("member/counselPrivilege2");
-//		mav.addObject("lists", lists);
-//		return mav;
-//	}
+	@GetMapping("/api/counselorPrivilege")
+	@ResponseBody
+	public HashMap<String, Object> counselorPrivilege() throws Exception {
+		HashMap<String, Object> result = new HashMap<>();
+		result.put("memberDTO", memberService.selectByPrivileage2());
+		return result;
+	}
 
 	// 관리자 페이지 - 상담사 권한 UP
-//	@GetMapping("/admin/privilegeUp")
-//	public String privileageUp(HttpServletRequest request) throws Exception {
-//		String nextPage = "";
-//		String[] check = request.getParameterValues("check");
-//		if (check == null) {
-//			nextPage = "member/upFail";
-//		} else {
-//			List<String> list = Arrays.asList(check);
-//			memberService.privileageUp(list);
-//			nextPage = "redirect:/admin/counselPrivilege2";
-//		}
-//		return nextPage;
-//	}
+	@PutMapping("/api/privilegeUp")
+	@ResponseBody
+	public int privileageUp(@RequestParam Map<String, String> map) throws Exception {
+		Collection coll = map.values();
+		List<String> list = new ArrayList<String>(coll);
+		return memberService.privileageUp(list);
+	}
 
 	// 아이디 중복 체크
 	@PostMapping("/api/checkEmail")
