@@ -62,39 +62,43 @@ public class MemberController {
 	// 로그인 세션 불러오기
 	@GetMapping("/api/loginSession")
 	@ResponseBody
-	public MemberDTO mypage(HttpSession session) throws Exception {
+	public MemberDTO loginSession(HttpSession session) throws Exception {
 		return (MemberDTO) session.getAttribute("login");
 	}
 
-	// 새 비번 변경
-//	@PutMapping("/newPw")
-//	@ResponseBody
-//	public int newPw(MemberDTO memberDTO) throws Exception {
-//		return memberService.newPw(memberDTO);
-//	}
+	// 비번 찾기 임시 세션
+	@GetMapping("/api/findPwSession")
+	@ResponseBody
+	public MemberDTO findPwSession(HttpSession session) throws Exception {
+		return (MemberDTO) session.getAttribute("findPw");
+	}
+
+	// Forgot Password?
+	@PostMapping("/api/findPw")
+	@ResponseBody
+	public MemberDTO findPw(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
+		String email = memberDTO.getEmail();
+		MemberDTO mdto = memberService.selectByEmail(email);
+		session.setAttribute("findPw", mdto);
+		return mdto;
+	}
 
 	// 새 비번 변경
+	@PutMapping("/api/newPw")
+	@ResponseBody
+	public int newPw(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
+		MemberDTO mDTO = (MemberDTO) session.getAttribute("findPw");
+		mDTO.setPassword(memberDTO.getPassword());
+		return memberService.newPw(mDTO);
+	}
+
 	@PutMapping("/api/myPage/newPw")
 	@ResponseBody
 	public int myPageNewPw(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
 		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-		memberDTO.setId(mDTO.getId());
-		memberDTO.setEmail(mDTO.getEmail());
-		memberDTO.setPrivilege(mDTO.getPrivilege());
-		memberDTO.setName(mDTO.getName());
-		memberDTO.setPhone(mDTO.getPhone());
-		memberDTO.setDatetime(mDTO.getDatetime());
-		memberDTO.setPhoto(mDTO.getPhoto());
-		memberDTO.setRegion(mDTO.getRegion());
-		memberDTO.setPoint(mDTO.getPoint());
-		memberDTO.setZipcode(mDTO.getZipcode());
-		memberDTO.setAddress1(mDTO.getAddress1());
-		memberDTO.setAddress2(mDTO.getAddress2());
-		memberDTO.setAddress3(mDTO.getAddress3());
-		memberDTO.setJob(mDTO.getJob());
-		memberDTO.setIntroduction(mDTO.getIntroduction());
-		session.setAttribute("login", memberDTO);
-		return memberService.newPw(memberDTO);
+		mDTO.setPassword(memberDTO.getPassword());
+		session.setAttribute("login", mDTO);
+		return memberService.newPw(mDTO);
 	}
 
 	// 일반회원 정보 수정
