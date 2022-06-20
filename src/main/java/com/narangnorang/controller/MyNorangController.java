@@ -88,7 +88,6 @@ public class MyNorangController {
 	@PostMapping("/api/mynorang/dailylog")
 	public Map<String, Object> insertDailyLog(HttpSession session, @RequestBody DailyLogDTO dailyLogDTO)
 			throws Exception {
-		System.out.println(dailyLogDTO);
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
 		dailyLogDTO.setMemberId(memberId);
