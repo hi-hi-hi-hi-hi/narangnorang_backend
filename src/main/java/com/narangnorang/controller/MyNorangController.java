@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.narangnorang.dto.ChallengeDTO;
@@ -60,14 +61,12 @@ public class MyNorangController {
 			int index = Integer.parseInt(element.getDatetime().substring(8, 10)) - 1;
 			dailyLogCalendar.set(index, element);
 		}
-		for (int i = 1; i < start; i++) {
-			dailyLogCalendar.add(0, null);
-		}
-		/* ------------------------------ */
+		/* ----------------------------------- */
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("year", year);
 		response.put("month", month);
 		response.put("start", start);
+		response.put("end", end);
 		response.put("dailyLogCalendar", dailyLogCalendar);
 		return response;
 	}
@@ -86,8 +85,10 @@ public class MyNorangController {
 	}
 
 	// 일일 데이터 저장
-	@PostMapping("/api/mynorang/dailylog/{datetime}")
-	public Map<String, Object> insertDailyLog(HttpSession session, DailyLogDTO dailyLogDTO) throws Exception {
+	@PostMapping("/api/mynorang/dailylog")
+	public Map<String, Object> insertDailyLog(HttpSession session, @RequestBody DailyLogDTO dailyLogDTO)
+			throws Exception {
+		System.out.println(dailyLogDTO);
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
 		dailyLogDTO.setMemberId(memberId);
@@ -102,10 +103,12 @@ public class MyNorangController {
 
 	// 일일 데이터 수정
 	@PutMapping("/api/mynorang/dailylog/{datetime}")
-	public Map<String, Object> updateDailyLog(HttpSession session, DailyLogDTO dailyLogDTO) throws Exception {
+	public Map<String, Object> updateDailyLog(HttpSession session, @PathVariable String datetime,
+			@RequestBody DailyLogDTO dailyLogDTO) throws Exception {
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
 		dailyLogDTO.setMemberId(memberId);
+		dailyLogDTO.setDatetime(datetime);
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("flag", false);
 		int cnt = myNorangService.updateDailyLog(dailyLogDTO);
@@ -117,10 +120,12 @@ public class MyNorangController {
 
 	// 일일 데이터 삭제
 	@DeleteMapping("/api/mynorang/dailylog/{datetime}")
-	public Map<String, Object> deleteDailyLog(HttpSession session, DailyLogDTO dailyLogDTO) throws Exception {
+	public Map<String, Object> deleteDailyLog(HttpSession session, @PathVariable String datetime,
+			@RequestBody DailyLogDTO dailyLogDTO) throws Exception {
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
 		dailyLogDTO.setMemberId(memberId);
+		dailyLogDTO.setDatetime(datetime);
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("flag", false);
 		int cnt = myNorangService.deleteDailyLog(dailyLogDTO);
@@ -131,7 +136,7 @@ public class MyNorangController {
 	}
 
 	// 기분 상태 조회(주간)
-	@PostMapping("/api/mynorang/moodstate")
+	@GetMapping("/api/mynorang/moodstate")
 	public List<MoodStateDTO> selectMoodStateList(HttpSession session, Integer year, Integer month, Integer date)
 			throws Exception {
 		MemberDTO login = (MemberDTO) session.getAttribute("login");

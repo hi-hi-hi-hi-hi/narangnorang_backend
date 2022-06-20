@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,11 +40,10 @@ public class TestController {
 
 	// 지난 테스트 결과
 	@GetMapping("/api/mynorang/testresult")
-	public List<TestResultDTO> selectList(HttpSession session, Model model) throws Exception {
+	public List<TestResultDTO> selectList(HttpSession session) throws Exception {
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
 		List<TestResultDTO> testResultList = testService.selectList(memberId);
-		model.addAttribute("testResultList", testResultList);
 		return testResultList;
 	}
 
