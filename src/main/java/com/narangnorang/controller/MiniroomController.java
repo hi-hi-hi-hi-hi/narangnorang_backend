@@ -18,20 +18,23 @@ public class MiniroomController {
 	@Autowired
 	MiniroomService miniroomService;
 
-
 	// 홈 (로그인 O)
 	@ResponseBody
 	@GetMapping("/api/home")
-	public MyRoomDTO home(HttpSession session) throws Exception {
+	public HashMap<String, Object> home(HttpSession session) throws Exception {
 		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
 		int id = mDTO.getId();
 		int privilege = mDTO.getPrivilege();
+		int point = mDTO.getPoint();
 		MyRoomDTO myRoomDTO = new MyRoomDTO();
 		if(privilege == 3){
 			myRoomDTO = miniroomService.selectMyRoom(id);
 		}
-
-		return myRoomDTO;
+		HashMap<String, Object> result = new HashMap<>();
+		result.put("point", point);
+		result.put("privilege", privilege);
+		result.put("myRoomDTO",myRoomDTO);
+		return result;
 	}
 
 	@GetMapping("/api/home/buy")
