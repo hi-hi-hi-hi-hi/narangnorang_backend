@@ -1,30 +1,20 @@
 package com.narangnorang.controller;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.narangnorang.dto.MyRoomDTO;
-import com.narangnorang.service.MiniroomService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.narangnorang.dto.MemberDTO;
 import com.narangnorang.service.MemberService;
-import com.narangnorang.service.MessageService;
 
-@Controller
+@RestController
 public class MemberController {
 
 	@Autowired
@@ -32,10 +22,8 @@ public class MemberController {
 	@Autowired
 	JavaMailSender javaMailSender;
 
-
 	// 로그인
 	@PostMapping("/api/login")
-	@ResponseBody
 	public MemberDTO login(HttpSession session, @RequestParam Map<String, String> map) throws Exception {
 		MemberDTO memberDTO = memberService.selectMember(map);
 		session.setAttribute("login", memberDTO);
@@ -43,192 +31,160 @@ public class MemberController {
 	}
 
 	// 로그아웃
-	@GetMapping("/logout")
-	public String logout(HttpSession session) throws Exception {
+	@GetMapping("/api/logout")
+	public boolean logout(HttpSession session) throws Exception {
 		session.invalidate();
-		return "redirect:/main";
+		return true;
 	}
 
 	// 세션 만료
-	@GetMapping("/sessionInvalidate")
-	public String sessionInvalidate() throws Exception {
-		return "common/sessionInvalidate";
-	}
+//	@GetMapping("/sessionInvalidate")
+//	public String sessionInvalidate() throws Exception {
+//		return "common/sessionInvalidate";
+//	}
 
 	// 일반회원가입 처리
 	@PostMapping("/api/generalSignUp")
-	@ResponseBody
 	public int insertGeneral(MemberDTO memberDTO) throws Exception {
 		return memberService.generalSignUp(memberDTO);
 	}
 
 	// 상담사 회원가입 처리
 	@PostMapping("/api/counselorSignUp")
-	@ResponseBody
 	public int insertCounselor(MemberDTO memberDTO) throws Exception {
 		return memberService.counselorSignUp(memberDTO);
 	}
-	
 
-//	// 새 비번 폼
-//	@PostMapping("/findPw")
-//	public String newPwForm(HttpSession session, @RequestParam("email") String email) throws Exception {
-//		MemberDTO memberDTO = memberService.selectByEmail(email);
-//		session.setAttribute("findPw", memberDTO);
-//		return "member/newPwForm";
-//	}
+	// 로그인 세션 불러오기
+	@GetMapping("/api/loginSession")
+	public MemberDTO loginSession(HttpSession session) throws Exception {
+		return (MemberDTO) session.getAttribute("login");
+	}
 
-//	@GetMapping("/myPage/newPwForm")
-//	public String myPageNewPwForm(HttpSession session) throws Exception {
-//		session.getAttribute("login");
-//		return "member/myPageNewPwForm";
-//	}
+	// 비번 찾기 임시 세션
+	@GetMapping("/api/findPwSession")
+	public MemberDTO findPwSession(HttpSession session) throws Exception {
+		return (MemberDTO) session.getAttribute("findPw");
+	}
+
+	// Forgot Password?
+	@PostMapping("/api/findPw")
+	public MemberDTO findPw(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
+		String email = memberDTO.getEmail();
+		MemberDTO mdto = memberService.selectByEmail(email);
+		session.setAttribute("findPw", mdto);
+		return mdto;
+	}
 
 	// 새 비번 변경
-//	@PutMapping("/newPw")
-//	@ResponseBody
-//	public int newPw(MemberDTO memberDTO) throws Exception {
-//		return memberService.newPw(memberDTO);
-//	}
-//
-//	@PutMapping("/myPage/newPw")
-//	@ResponseBody
-//	public int myPageNewPw(MemberDTO memberDTO) throws Exception {
-//		return memberService.newPw(memberDTO);
-//	}
+	@PutMapping("/api/newPw")
+	public int newPw(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
+		MemberDTO mDTO = (MemberDTO) session.getAttribute("findPw");
+		mDTO.setPassword(memberDTO.getPassword());
+		return memberService.newPw(mDTO);
+	}
 
-	// mypage 비번 재확인 및 privilege에 따른 폼 분리
-	@PostMapping("/mypage2")
-	@ResponseBody
-	public String mypagePwChek(HttpSession session, @RequestParam String password) throws Exception {
+	@PutMapping("/api/myPage/newPw")
+	public int myPageNewPw(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
 		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-		String passwordCompare = mDTO.getPassword();
-		int privilege = mDTO.getPrivilege();
-		if (!passwordCompare.equals(password)) {
-			System.out.println("1");
-			return "/narangnorang/mypage";
-		} else if (privilege == 0) {
-			System.out.println(2);
-			return "/narangnorang/admin";
-		} else {
-			System.out.println(3);
-			return "/narangnorang/mypage/edit";
-		}
+		mDTO.setPassword(memberDTO.getPassword());
+		session.setAttribute("login", mDTO);
+		return memberService.newPw(mDTO);
 	}
 
 	// 일반회원 정보 수정
-//	@PutMapping("/generalEdit")
-//	public String generalEdit(HttpSession session, MemberDTO memberDTO) throws Exception {
-//		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-//		memberDTO.setId(mDTO.getId());
-//		memberDTO.setPassword(mDTO.getPassword());
-//		memberDTO.setPrivilege(mDTO.getPrivilege());
-//		memberDTO.setDatetime(mDTO.getDatetime());
-//		memberDTO.setPhoto(mDTO.getPhoto());
-//		memberDTO.setPoint(mDTO.getPoint());
-//		memberService.generalEdit(memberDTO);
-//		session.setAttribute("login", memberDTO);
-//		return "redirect:/mypage/edit";
-//	}
+	@PutMapping("/api/generalEdit")
+	public int generalEdit(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
+		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
+		memberDTO.setId(mDTO.getId());
+		memberDTO.setPassword(mDTO.getPassword());
+		memberDTO.setPrivilege(mDTO.getPrivilege());
+		memberDTO.setDatetime(mDTO.getDatetime());
+		memberDTO.setPhoto(mDTO.getPhoto());
+		memberDTO.setPoint(mDTO.getPoint());
+		session.setAttribute("login", memberDTO);
+		return memberService.generalEdit(memberDTO);
+	}
 
 	// 상담사회원 정보 수정
-//	@PutMapping("/counselorEdit")
-//	public String counselorEdit(HttpSession session, MemberDTO memberDTO) throws Exception {
-//		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-//		memberDTO.setId(mDTO.getId());
-//		memberDTO.setPassword(mDTO.getPassword());
-//		memberDTO.setPrivilege(mDTO.getPrivilege());
-//		memberDTO.setDatetime(mDTO.getDatetime());
-//		memberDTO.setPhoto(mDTO.getPhoto());
-//		memberService.counselorEdit(memberDTO);
-//		return "redirect:/mypage/edit";
-//	}
+	@PutMapping("/api/counselorEdit")
+	public int counselorEdit(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
+		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
+		memberDTO.setId(mDTO.getId());
+		memberDTO.setPassword(mDTO.getPassword());
+		memberDTO.setPrivilege(mDTO.getPrivilege());
+		memberDTO.setDatetime(mDTO.getDatetime());
+		memberDTO.setPhoto(mDTO.getPhoto());
+		session.setAttribute("login", memberDTO);
+		return memberService.counselorEdit(memberDTO);
+	}
 
 	// 프로필 사진 수정
-//	@PutMapping("/photoUpdate")
-//	public String photoUpdate(HttpSession session, MemberDTO memberDTO, @RequestParam("filename") MultipartFile mFile)
-//			throws Exception {
-//		String uploadPath = "C:/bootstudy/sts-bundle/sts-3.9.14.RELEASE/project/HighFive/NarangNorang/src/main/resources/static/images/member/";
-//		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-//		try {
-//			if (mDTO.getPhoto() != null) {
-//				File file = new File(uploadPath + mDTO.getPhoto());
-//				file.delete();
-//			}
-//			String newName = mFile.getOriginalFilename();
-//			newName = String.valueOf(mDTO.getId());
-//			mFile.transferTo(new File(uploadPath + newName + ".png"));
-//
-//			mDTO.setPhoto(newName);
-//			memberService.photoUpdate(memberDTO);
-//			session.setAttribute("login", mDTO);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return "redirect:/mypage/edit";
-//	}
+	@PutMapping("/api/photoUpdate")
+	public int photoUpdate(HttpSession session, @RequestParam MultipartFile mFile) throws Exception {
+		String uploadPath = "C:/HighFive/narangnorang_frontend/src/assets/member/";
+		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
+		System.out.println(mFile);
+		int cnt = 0;
+		try {
+			if (mDTO.getPhoto() != null) {
+				File file = new File(uploadPath + mDTO.getPhoto());
+				file.delete();
+			}
+			String newName = String.valueOf(mDTO.getId());
+			mFile.transferTo(new File(uploadPath + newName + ".png"));
+
+			mDTO.setPhoto(newName);
+			cnt = memberService.photoUpdate(mDTO);
+			session.setAttribute("login", mDTO);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return cnt;
+	}
 
 	// 관리자 페이지 - 회원 관리
-//	@GetMapping(value = "/admin")
-//	@ResponseBody
-//	public ModelAndView getAllLists() throws Exception {
-//		List<MemberDTO> lists = memberService.selectAll();
-//		ModelAndView mav = new ModelAndView("member/adminEdit");
-//		mav.addObject("lists", lists);
-//		return mav;
-//	}
+	@GetMapping(value = "/api/memberManagement")
+	public HashMap<String, Object> getAllLists() throws Exception {
+		HashMap<String, Object> result = new HashMap<>();
+		result.put("memberDTO", memberService.selectAll());
+		return result;
+	}
 
 	// 관리자 페이지 - 선택 계정 삭제
-//	@GetMapping("/admin/delMember")
-//	public String delMember(HttpServletRequest request) throws Exception {
-//		String nextPage = "";
-//		String[] check = request.getParameterValues("check");
-//		if (check == null) {
-//			nextPage = "member/delFail";
-//		} else {
-//			List<String> list = Arrays.asList(check);
-//			memberService.delSelected(list);
-//			nextPage = "redirect:/admin";
-//		}
-//		return nextPage;
-//	}
+	@DeleteMapping("/api/delMember")
+	public int delMember(@RequestParam Map<String, String> map) throws Exception {
+		Collection coll = map.values();
+		List<String> list = new ArrayList<String>(coll);
+		return memberService.delSelected(list);
+	}
 
 	// 관리자 페이지 - 상담사 권한 관리
-//	@GetMapping("/admin/counselPrivilege2")
-//	@ResponseBody
-//	public ModelAndView getPrivileage2() throws Exception {
-//		List<MemberDTO> lists = memberService.selectByPrivileage2();
-//		ModelAndView mav = new ModelAndView("member/counselPrivilege2");
-//		mav.addObject("lists", lists);
-//		return mav;
-//	}
+	@GetMapping("/api/counselorPrivilege")
+	public HashMap<String, Object> counselorPrivilege() throws Exception {
+		HashMap<String, Object> result = new HashMap<>();
+		result.put("memberDTO", memberService.selectByPrivileage2());
+		return result;
+	}
 
 	// 관리자 페이지 - 상담사 권한 UP
-//	@GetMapping("/admin/privilegeUp")
-//	public String privileageUp(HttpServletRequest request) throws Exception {
-//		String nextPage = "";
-//		String[] check = request.getParameterValues("check");
-//		if (check == null) {
-//			nextPage = "member/upFail";
-//		} else {
-//			List<String> list = Arrays.asList(check);
-//			memberService.privileageUp(list);
-//			nextPage = "redirect:/admin/counselPrivilege2";
-//		}
-//		return nextPage;
-//	}
+	@PutMapping("/api/privilegeUp")
+	public int privileageUp(@RequestParam Map<String, String> map) throws Exception {
+		Collection coll = map.values();
+		List<String> list = new ArrayList<String>(coll);
+		return memberService.privileageUp(list);
+	}
 
 	// 아이디 중복 체크
 	@PostMapping("/api/checkEmail")
-	public int checkEmail(@RequestParam String email) throws Exception {
-		return memberService.checkId(email);
+	public int checkEmail(@RequestBody MemberDTO dto) throws Exception {
+		return memberService.checkId(dto.getEmail());
 	}
 
 	// 닉네임 중복 체크
 	@PostMapping("/api/checkName")
-	@ResponseBody
-	public int checkNickname(@RequestParam String name) throws Exception {
-		return memberService.checkNickname(name);
+	public int checkNickname(@RequestBody MemberDTO dto) throws Exception {
+		return memberService.checkNickname(dto.getName());
 	}
 
 	// 인증 이메일
