@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import java.lang.reflect.Member;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class MiniroomController {
@@ -17,21 +18,18 @@ public class MiniroomController {
 	@Autowired
 	MiniroomService miniroomService;
 
+
 	// 홈 (로그인 O)
 	@ResponseBody
 	@GetMapping("/api/home")
-	public MyRoomDTO home() throws Exception {
-//		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-//		int id = mDTO.getId();
-//		int privilege = mDTO.getPrivilege();
-//		ModelAndView mav = new ModelAndView("home");
-//		mav.addObject("privilege",privilege);
+	public MyRoomDTO home(HttpSession session) throws Exception {
+		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
+		int id = mDTO.getId();
+		int privilege = mDTO.getPrivilege();
 		MyRoomDTO myRoomDTO = new MyRoomDTO();
-		int id = 104;
-//		if(privilege == 3){
+		if(privilege == 3){
 			myRoomDTO = miniroomService.selectMyRoom(id);
-//			mav.addObject("myRoomDTO", myRoomDTO);
-//		}
+		}
 
 		return myRoomDTO;
 	}
@@ -39,11 +37,11 @@ public class MiniroomController {
 	@GetMapping("/api/home/buy")
 	@ResponseBody
 	public HashMap<String, Object> buy(@RequestParam(value="category",required=false,defaultValue="bed") String category
-	) throws Exception {
-
+	,HttpSession session) throws Exception {
+		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
+		int id = mDTO.getId();
 		HashMap<String, Object> result = new HashMap<>();
 		List<ItemDTO> list =  miniroomService.selectAllItems(category);
-		int id = 104;
 		MyRoomDTO myRoomDTO = miniroomService.selectMyRoom(id);
 		myRoomDTO.setMemberId(id);
 		result.put("itemList",list);
@@ -55,11 +53,11 @@ public class MiniroomController {
 	@GetMapping("/api/home/style")
 	@ResponseBody
 	public HashMap<String, Object> style(@RequestParam(value="category",required=false,defaultValue="bed") String category
-	) throws Exception {
-
+	,HttpSession session) throws Exception {
+		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
+		int id = mDTO.getId();
 		HashMap<String, Object> map = new HashMap<>();
 		HashMap<String, Object> result = new HashMap<>();
-		int id = 104;
 
 		List<ItemDTO> itemList =  miniroomService.selectAllItems(category);
 		map.put("category", category);
@@ -73,11 +71,12 @@ public class MiniroomController {
 
 	@GetMapping("/api/home/wish")
 	@ResponseBody
-	public HashMap<String, Object> wish() throws Exception {
-
+	public HashMap<String, Object> wish(HttpSession session) throws Exception {
+		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
+		int id = mDTO.getId();
+		System.out.println(id);
 		HashMap<String,Object> map = new HashMap<>();
 		HashMap<String,Object> result = new HashMap<>();
-		int id = 104;
 		List<ItemDTO> list =  miniroomService.selectAllWishItems(id);
 		result.put("wishItemList",list);
 		result.put("memberId",id);
@@ -86,21 +85,21 @@ public class MiniroomController {
 	}
 
 	//물건 구매
+
+	@PostMapping("/api/home/buy")
 	@ResponseBody
-	@PostMapping("/home/buy")
-	public String buy(HttpSession session,int memberId, int price,int itemId) throws Exception {
-
-
+	public String buy(@RequestBody Map<String, Object> paramMap, HttpSession session) throws Exception {
+		Map<String, Object> map2 = (Map<String, Object>) paramMap.get("data");
+		int id = (int)map2.get("id");
+		int price = (int)map2.get("price");
 		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
-//		//파라미터 이용해서 구매 버튼 클릭한 해당 itemId 받아옴.
-//		int itemId = myItemDTO.getItemId();
-
+		int memberId = mDTO.getId();
 		// Check에 쓰임. click한 아이템 price찾기에 쓰임.
 		HashMap<String, Object> map = new HashMap<>();
-		map.put("itemId", itemId);
+		map.put("itemId", id);
 		map.put("memberId", memberId);
 
-		int point = mDTO.getPoint();
+		Integer point = mDTO.getPoint();
 
 		//price랑 memberId 등록.
 		HashMap<String, Integer> pointMap = new HashMap<>();
@@ -136,14 +135,16 @@ public class MiniroomController {
 
 	// 위시리스트 추가
 	@ResponseBody
-	@PostMapping("/home/buy/{itemId}")
-	public String wishupdate(@PathVariable("itemId") int itemId, int memberId) throws Exception{
+	@PostMapping("api//home/buy/{itemId}")
+	public String wishupdate(@PathVariable("itemId") int itemId,HttpSession session) throws Exception{
 
+		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
+		int id = mDTO.getId();
 		String mesg;
 		int result=0;
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("itemId",itemId);
-		map.put("memberId",memberId);
+		map.put("memberId",id);
 
 		MyItemDTO check = miniroomService.selectByMyItemId(map);
 		if(check == null){
@@ -151,7 +152,7 @@ public class MiniroomController {
 			mesg = "위시리스트에 추가 되었습니다.";
 		}else{
 			if(check.getWish()==0){
-				mesg="이미 구매한 상품입니다.";
+				mesg="이미 구매한 상품이므로 위시리스트에 추가되지 않습니다.";
 			}else{
 				result = miniroomService.wishDelete(map);
 				mesg = "위시리스트에서 제거 되었습니다.";
@@ -164,14 +165,12 @@ public class MiniroomController {
 
 	//미니룸에 내아이템 적용
 	@ResponseBody
-	@PutMapping("/home/style")
-	public int applyMiniroom(int itemId, int memberId, String category) throws Exception{
-		HashMap<String,Object> map = new HashMap<>();
-
-		map.put("itemId", itemId);
-		map.put("memberId", memberId);
-		map.put("category", category);
-
+	@PutMapping("/api/home/style")
+	public int applyMiniroom(HttpSession session,@RequestBody Map<String, Object> paramMap) throws Exception{
+		HashMap<String,Object> map = (HashMap<String, Object>) paramMap.get("data");
+		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
+		int id = mDTO.getId();
+		map.put("memberId", id);
 		int result = miniroomService.applyMiniroom(map);
 		return result;
 	}
