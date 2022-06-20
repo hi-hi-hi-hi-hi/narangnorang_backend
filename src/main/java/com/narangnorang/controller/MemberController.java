@@ -69,11 +69,11 @@ public class MemberController {
 
 	// Forgot Password?
 	@PostMapping("/api/findPw")
-	public MemberDTO findPw(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
+	public int findPw(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
 		String email = memberDTO.getEmail();
 		MemberDTO mdto = memberService.selectByEmail(email);
 		session.setAttribute("findPw", mdto);
-		return mdto;
+		return memberService.checkId(email);
 	}
 
 	// 새 비번 변경
@@ -81,6 +81,7 @@ public class MemberController {
 	public int newPw(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
 		MemberDTO mDTO = (MemberDTO) session.getAttribute("findPw");
 		mDTO.setPassword(memberDTO.getPassword());
+		System.out.println(mDTO);
 		return memberService.newPw(mDTO);
 	}
 
