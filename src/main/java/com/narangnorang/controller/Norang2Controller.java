@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -132,7 +133,8 @@ public class Norang2Controller {
 
 	// 일일 데이터 저장
 	@PostMapping("/api/norang2/dailylog")
-	public Map<String, Object> insertDailyLog(HttpSession session, DailyLogDTO dailyLogDTO) throws Exception {
+	public Map<String, Object> insertDailyLog(HttpSession session, @RequestBody DailyLogDTO dailyLogDTO)
+			throws Exception {
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
 		Calendar calendar = Calendar.getInstance();
@@ -151,7 +153,8 @@ public class Norang2Controller {
 
 	// 기분 상태 저장
 	@PostMapping("/api/norang2/moodstate")
-	public Map<String, Object> insertMoodState(HttpSession session, MoodStateDTO moodStateDTO) throws Exception {
+	public Map<String, Object> insertMoodState(HttpSession session, @RequestBody MoodStateDTO moodStateDTO)
+			throws Exception {
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
 		moodStateDTO.setMemberId(memberId);
