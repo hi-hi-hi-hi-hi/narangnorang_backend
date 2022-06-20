@@ -1,14 +1,13 @@
 package com.narangnorang.controller;
 
 import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.narangnorang.dto.MemberDTO;
 import com.narangnorang.service.CounselService;
 
@@ -18,19 +17,20 @@ public class CounselController {
 	@Autowired
 	CounselService counselService;
 	
-	@ResponseBody
 	@GetMapping("/api/counsel/list")
-	public HashMap<String, Object> selectCounselorList() throws Exception {
-		HashMap<String, Object> result = new HashMap<>();
+	public Map<String, Object> selectCounselorList() throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		
 		result.put("counselorList", counselService.selectCounselorList());
+		
 		return result;
 	}
 	
-	@ResponseBody
 	@GetMapping("/api/counsel/userRegion")
-	public HashMap<String, Object> getUserRegion(HttpSession session) throws Exception {
-		HashMap<String, Object> result = new HashMap<>();
+	public Map<String, Object> getUserRegion(HttpSession session) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
 		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
+		
 		result.put("userRegion", memberDTO.getRegion());
 		
 		return result;
