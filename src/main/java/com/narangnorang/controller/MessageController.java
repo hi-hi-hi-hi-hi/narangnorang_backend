@@ -1,5 +1,7 @@
 package com.narangnorang.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,7 +32,7 @@ public class MessageController {
 	@Autowired
 	MessageService messageService;
 
-	@GetMapping("/message")
+	@GetMapping("/api/message/list")
 	public Map<String, Object> selectMessageList(HttpSession session) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
@@ -56,14 +58,17 @@ public class MessageController {
 				}
 			}
 		}
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd");
+		LocalDate localDate = LocalDate.now();
 		
 		result.put("messageList", messageList);
 		result.put("userId", userId);
+		result.put("todayDate", dtf.format(localDate));
 		
 		return result;
 	}
 
-	@PostMapping("/message/counsel")
+	@PostMapping("/api/message/send")
 	public Map<String, Object> sendMessageToCounselor(HttpSession session, @RequestParam Map<String, Object> messageInfo) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
@@ -77,8 +82,8 @@ public class MessageController {
 		return result;
 	}
 
-	@GetMapping("/message/chats/{otherId}")
-	public Map<String, Object> popupChats(HttpSession session, @PathVariable @ModelAttribute String otherId) throws Exception {
+	@GetMapping("/api/message/history")
+	public Map<String, Object> popupChats(HttpSession session, @RequestParam int otherId) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		Map<String, Object> map = new HashMap<String, Object>();
 
@@ -88,21 +93,12 @@ public class MessageController {
 		map.put("userId", userId);
 		map.put("otherId", otherId);
 
-		result.put("chats", messageService.getChats(map));
+		result.put("messageHistory", messageService.getChats(map));
 		
 		return result;
 	}
 
-	@PostMapping("/message/send")
-	public Map<String, Object> sendMessage(@RequestBody Map<String, Object> messageInfo) throws Exception {
-		Map<String, Object> result = new HashMap<String, Object>();
-		
-		result.put("result", messageService.sendMessage(messageInfo));
-		
-		return result;
-	}
-
-	@GetMapping("/message/unread")
+	@GetMapping("/api/message/unread")
 	public Map<String, Object> countUnread(HttpSession session) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
 		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
