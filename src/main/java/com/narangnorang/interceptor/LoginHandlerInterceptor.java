@@ -14,17 +14,17 @@ import com.narangnorang.dto.MemberDTO;
 public class LoginHandlerInterceptor implements HandlerInterceptor {
 
 	// 로그인 여부 확인
-	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-			throws Exception {
-		HttpSession session = request.getSession();
-		MemberDTO login = (MemberDTO) session.getAttribute("login");
-		if (login != null) {
-			return true;
-		}
-		response.sendRedirect("/narangnorang/sessionInvalidate");
-		return false;
-	}
+//	@Override
+//	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+//			throws Exception {
+//		HttpSession session = request.getSession();
+//		MemberDTO login = (MemberDTO) session.getAttribute("login");
+//		if (login != null) {
+//			return true;
+//		}
+//		response.sendRedirect("/narangnorang/sessionInvalidate");
+//		return false;
+//	}
 
 //	@Override
 //	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
