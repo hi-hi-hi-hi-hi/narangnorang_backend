@@ -3,6 +3,7 @@ package com.narangnorang.controller;
 import java.io.File;
 import java.util.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,10 +123,10 @@ public class MemberController {
 
 	// 프로필 사진 수정
 	@PutMapping("/api/photoUpdate")
-	public int photoUpdate(HttpSession session, @RequestParam MultipartFile mFile) throws Exception {
-		String uploadPath = "C:/HighFive/narangnorang_frontend/src/assets/member/";
+	public int photoUpdate(HttpSession session, HttpServletRequest request, @RequestParam MultipartFile mFile) throws Exception {
+		String uploadPath = request.getSession().getServletContext().getRealPath("/")
+				.concat("resources/images/member/");
 		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-		System.out.println(mFile);
 		int cnt = 0;
 		try {
 			if (mDTO.getPhoto() != null) {
