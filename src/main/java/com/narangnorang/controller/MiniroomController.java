@@ -1,6 +1,7 @@
 package com.narangnorang.controller;
 
 import com.narangnorang.dto.*;
+import com.narangnorang.service.MemberService;
 import com.narangnorang.service.MiniroomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,14 +19,19 @@ public class MiniroomController {
 	@Autowired
 	MiniroomService miniroomService;
 
+	@Autowired
+	MemberService memberService;
+
 	// 홈 (로그인 O)
 	@ResponseBody
 	@GetMapping("/api/home")
 	public HashMap<String, Object> home(HttpSession session) throws Exception {
+
 		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
 		int id = mDTO.getId();
 		int privilege = mDTO.getPrivilege();
 		int point = mDTO.getPoint();
+
 		MyRoomDTO myRoomDTO = new MyRoomDTO();
 		if(privilege == 3){
 			myRoomDTO = miniroomService.selectMyRoom(id);
@@ -102,7 +108,7 @@ public class MiniroomController {
 		map.put("itemId", id);
 		map.put("memberId", memberId);
 
-		Integer point = mDTO.getPoint();
+		int point = mDTO.getPoint();
 
 		//price랑 memberId 등록.
 		HashMap<String, Integer> pointMap = new HashMap<>();
@@ -115,21 +121,22 @@ public class MiniroomController {
 
 		//구매할 아이템이 myItem테이블에 없고 포인트가 price 이상이면 구매. point 없으면 포인트 부족메세지.
 		if (check == null) {
-			if (point >= price) {
-				//point 차감.
-				miniroomService.insertBuy(map, pointMap);
-				mesg = "구매완료, 포인트가" + price + " 만큼 차감 되었습니다.";
-			} else {
-				mesg = "포인트가 부족합니다.";
-			}
+				if (point >= price && point >= 0) {
+					//point 차감.
+					miniroomService.insertBuy(map, pointMap);
+					mesg = "구매완료, 포인트가" + price + " 만큼 차감 되었습니다.";
+				} else {
+					mesg = "포인트가 부족합니다.";
+				}
 
 		}else{
 			if (check.getWish()==0){
 				mesg="이미 구매한 상품입니다.";
-			}else{
+			}else if (point >= price && point >= 0){
 				miniroomService.wishZero(map);
 				mesg="위시리스트 상품을 구매했습니다.";
-
+			}else{
+				mesg="포인트가 부족합니다.";
 			}
 		}
 
