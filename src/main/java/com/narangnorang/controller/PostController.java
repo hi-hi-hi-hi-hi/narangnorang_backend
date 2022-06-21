@@ -1,5 +1,7 @@
 package com.narangnorang.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.narangnorang.dto.MemberDTO;
 import com.narangnorang.dto.PageDTO;
@@ -49,9 +50,13 @@ public class PostController {
 		pageDto.setTotalRows(postService.totalRecord(map).getTotalRows());
 		map.put("pageDto", pageDto);
 		
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd");
+		LocalDate localDate = LocalDate.now();	
+		
 		HashMap<String, Object> result = new HashMap<>();
 		result.put("postDto", postService.selectAllByCategory(map));
 		result.put("pageDto", pageDto);
+		result.put("todayDate", dtf.format(localDate));
 		
 		return result;
 	}
@@ -126,10 +131,9 @@ public class PostController {
 	
 	// 게시글 수정
 	@ResponseBody
-	@PutMapping("/post/{id}")
-	public int postEditPro(@PathVariable int id, PostDTO pDto) throws Exception{
-		int result = postService.update(pDto);
-		return result;
+	@PutMapping("/api/post/{id}")
+	public int postEditPro(@PathVariable int id, @RequestBody PostDTO pDto) throws Exception{
+		return postService.update(pDto);
 	}
 	
 	// 댓글 등록
