@@ -95,4 +95,11 @@
 		]]>
 	</update>
 
+	<select id="selectMemberPoint" parameterType="int" resultType="MemberDTO">
+	<![CDATA[
+		SELECT * FROM member
+		WHERE id = #{id}
+		]]>
+	</select>
+
 </mapper>
