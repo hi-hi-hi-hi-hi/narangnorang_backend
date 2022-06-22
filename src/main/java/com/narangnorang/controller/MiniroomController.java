@@ -84,7 +84,6 @@ public class MiniroomController {
 	public HashMap<String, Object> wish(HttpSession session) throws Exception {
 		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
 		int id = mDTO.getId();
-		System.out.println(id);
 		HashMap<String,Object> map = new HashMap<>();
 		HashMap<String,Object> result = new HashMap<>();
 		List<ItemDTO> list =  miniroomService.selectAllWishItems(id);
