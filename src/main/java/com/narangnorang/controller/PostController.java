@@ -1,5 +1,7 @@
 package com.narangnorang.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,9 +15,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.narangnorang.dto.MemberDTO;
 import com.narangnorang.dto.PageDTO;
@@ -30,14 +32,9 @@ public class PostController {
 	@Autowired
 	PostService postService;
 	
-	@GetMapping("/post")
-	public String post() throws Exception{
-		return "postList";
-	}
-	
 	// 게시판 목록 보기
 	@ResponseBody
-	@GetMapping("/post/list")
+	@GetMapping("/api/post/list")
 	public HashMap<String, Object> postList(@RequestParam(defaultValue="자유게시판") String category,
 								@RequestParam(defaultValue="1") int p,
 								@RequestParam(defaultValue="0") int likes) throws Exception{
@@ -53,9 +50,13 @@ public class PostController {
 		pageDto.setTotalRows(postService.totalRecord(map).getTotalRows());
 		map.put("pageDto", pageDto);
 		
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd");
+		LocalDate localDate = LocalDate.now();	
+		
 		HashMap<String, Object> result = new HashMap<>();
 		result.put("postDto", postService.selectAllByCategory(map));
 		result.put("pageDto", pageDto);
+		result.put("todayDate", dtf.format(localDate));
 		
 		return result;
 	}
@@ -63,7 +64,7 @@ public class PostController {
 	
 	// 글 검색
 	@ResponseBody
-	@GetMapping("/post/search")
+	@GetMapping("/api/post/search")
 	public HashMap<String, Object> search(@RequestParam(defaultValue="1") int p,
 								String searchCol, String keyword, String category) throws Exception{
 		HashMap<String, Object> map = new HashMap<>();
@@ -84,78 +85,61 @@ public class PostController {
 		return result;
 	}
 	
+	// 자세히 보기
+	@ResponseBody
+	@GetMapping("/api/post/{id}")
+	public PostDTO postRetrieve(@PathVariable int id) throws Exception{
+		return postService.selectById(id);
+	}
+	
 	// 댓글 목록
 	@ResponseBody
-	@GetMapping("/post/reply/{id}")
+	@GetMapping("/api/post/reply/{id}")
 	public List<ReplyDTO> replyList(@PathVariable int id) throws Exception{
 		List<ReplyDTO> replyList = postService.selectAllReply(id);
 		return replyList;
 	}
 
-	// 자세히 보기
-	@GetMapping("/post/{id}")
-	public ModelAndView postRetrieve(@PathVariable int id) throws Exception{
-		PostDTO pDto = postService.selectById(id);
-		List<ReplyDTO> replyList = postService.selectAllReply(id);
-		ModelAndView mav = new ModelAndView("postRetrieve");
-		mav.addObject("retrieve", pDto);
-		mav.addObject("replyList", replyList);
-		return mav;
-	}
-	
-
-	// 글쓰기 페이지
-	@GetMapping("/post/write")
-	public ModelAndView postWrite(String category) throws Exception{
-		ModelAndView mav = new ModelAndView("postWrite");
-		mav.addObject("category", category);
-		return mav;
-	}
-
 	// 글 등록
-	@PostMapping("/post/write")
-	public ModelAndView postWritePro(PostDTO pDto, HttpSession session) throws Exception{
-		ModelAndView mav = new ModelAndView("post/postWriteSuccess");
+	@ResponseBody
+	@PostMapping("/api/post/write")
+	public int postWritePro(@RequestBody PostDTO pDto, HttpSession session) throws Exception{
 		MemberDTO mDto = (MemberDTO)session.getAttribute("login");
 
 		pDto.setMemberId(mDto.getId());
 		pDto.setMemberName(mDto.getName());
 		pDto.setMemberPrivilege(mDto.getPrivilege());
 
-		mav.addObject("category", pDto.getCategory());
-		int result = postService.insert(pDto);
-		return mav;
+		return postService.insert(pDto);
 	}
 	
 	// 게시글 삭제
 	@ResponseBody
-	@DeleteMapping("/post/{id}")
+	@DeleteMapping("/api/post/{id}")
 	public int postDelete(@PathVariable int id) throws Exception{
-		int result = postService.delete(id);
-		return result;
+		return postService.delete(id);
 	}
 	
-	// 게시글 수정 페이지
-	@GetMapping("/post/edit/{id}")
-	public ModelAndView postEdit(@PathVariable int id) throws Exception{
-		PostDTO pDto = postService.selectById(id);
-		ModelAndView mav = new ModelAndView("postEdit");
-		mav.addObject("pDto", pDto);
-		return mav;
-	}
+//	// 게시글 수정 페이지
+//	@GetMapping("/post/edit/{id}")
+//	public ModelAndView postEdit(@PathVariable int id) throws Exception{
+//		PostDTO pDto = postService.selectById(id);
+//		ModelAndView mav = new ModelAndView("postEdit");
+//		mav.addObject("pDto", pDto);
+//		return mav;
+//	}
 	
 	// 게시글 수정
 	@ResponseBody
-	@PutMapping("/post/{id}")
-	public int postEditPro(@PathVariable int id, PostDTO pDto) throws Exception{
-		int result = postService.update(pDto);
-		return result;
+	@PutMapping("/api/post/{id}")
+	public int postEditPro(@PathVariable int id, @RequestBody PostDTO pDto) throws Exception{
+		return postService.update(pDto);
 	}
 	
 	// 댓글 등록
 	@ResponseBody
-	@PostMapping("/post/reply")
-	public int insertReply(HttpSession session, ReplyDTO replyDto) throws Exception{
+	@PostMapping("/api/post/reply")
+	public int insertReply(HttpSession session, @RequestBody ReplyDTO replyDto) throws Exception{
 		HashMap<String, Object> map = new HashMap<>();
 		
 		MemberDTO mDto = (MemberDTO)session.getAttribute("login");
@@ -165,8 +149,8 @@ public class PostController {
 		map.put("amount", 1);
 		map.put("postId", replyDto.getPostId());
 		map.put("replyDto", replyDto);
-		int result = postService.insertReply(map);
-		return result;
+		
+		return postService.insertReply(map);
 	}
 	
 	// 댓글 삭제
@@ -192,7 +176,7 @@ public class PostController {
 	
 	// 게시글 추천
 	@ResponseBody
-	@PostMapping("/post/like/{id}")
+	@PostMapping("/api/post/like/{id}")
 	public int insertLiker(HttpSession session, @PathVariable int id)throws Exception{	
 		MemberDTO mDto = (MemberDTO)session.getAttribute("login");
 		PostLikerDTO postLikerDto = new PostLikerDTO();
@@ -206,7 +190,6 @@ public class PostController {
 			postLikerDto.setId(list.get(0).getId());
 			postService.deletePostLiker(postLikerDto);
 			result = -1;
-			//mesg = "추천을 취소했습니다.";
 		}else {
 			postService.insertPostLiker(postLikerDto);
 			result = 1;

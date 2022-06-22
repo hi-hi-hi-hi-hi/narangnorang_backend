@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,45 +21,53 @@ import com.narangnorang.dto.ChallengeDTO;
 import com.narangnorang.dto.DailyLogDTO;
 import com.narangnorang.dto.MemberDTO;
 import com.narangnorang.dto.MoodStateDTO;
-import com.narangnorang.service.Norang2Service;
+import com.narangnorang.service.NorangService;
 
 @RestController
-public class Norang2Controller {
+public class NorangController {
 
 	@Autowired
-	Norang2Service norang2Service;
+	NorangService norangService;
 
 	// 챌린지 조회(하루)
-	@GetMapping("/norang2/challenge")
+	@GetMapping("/api/norang/challenge")
 	public Map<String, Object> selectChallenge(HttpSession session) throws Exception {
-		Map<String, Object> response = new HashMap<String, Object>();
-		response.put("flag", false);
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String datetime = simpleDateFormat.format(calendar.getTime());
 		ChallengeDTO challengeDTO = new ChallengeDTO(0, memberId, datetime, null);
-		challengeDTO = norang2Service.selectChallenge(challengeDTO);
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("flag", false);
+		challengeDTO = norangService.selectChallenge(challengeDTO);
 		if (challengeDTO != null) {
 			response.put("flag", true);
 		} else {
 			int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 			String challenge = null;
-			if (dayOfWeek == 1) {
+			switch (dayOfWeek) {
+			case 1:
 				challenge = "셀카";
-			} else if (dayOfWeek == 2) {
+				break;
+			case 2:
 				challenge = "동물";
-			} else if (dayOfWeek == 3) {
+				break;
+			case 3:
 				challenge = "새";
-			} else if (dayOfWeek == 4) {
+				break;
+			case 4:
 				challenge = "나무";
-			} else if (dayOfWeek == 5) {
+				break;
+			case 5:
 				challenge = "벤치";
-			} else if (dayOfWeek == 6) {
+				break;
+			case 6:
 				challenge = "케이크";
-			} else {
+				break;
+			case 7:
 				challenge = "음료";
+				break;
 			}
 			response.put("challenge", challenge);
 		}
@@ -67,17 +75,17 @@ public class Norang2Controller {
 	}
 
 	// 일일 데이터 조회(하루)
-	@GetMapping("/norang2/dailylog")
+	@GetMapping("/api/norang/dailylog")
 	public Map<String, Object> selectDailyLog(HttpSession session) throws Exception {
-		Map<String, Object> response = new HashMap<String, Object>();
-		response.put("flag", false);
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String datetime = simpleDateFormat.format(calendar.getTime());
 		DailyLogDTO dailyLogDTO = new DailyLogDTO(0, memberId, datetime, 0, null);
-		dailyLogDTO = norang2Service.selectDailyLog(dailyLogDTO);
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("flag", false);
+		dailyLogDTO = norangService.selectDailyLog(dailyLogDTO);
 		if (dailyLogDTO != null) {
 			response.put("flag", true);
 		}
@@ -85,15 +93,15 @@ public class Norang2Controller {
 	}
 
 	// 기분 상태 조회(접속일시 이후)
-	@GetMapping("/norang2/moodstate")
+	@GetMapping("/api/norang/moodstate")
 	public Map<String, Object> selectMoodState(HttpSession session) throws Exception {
-		Map<String, Object> response = new HashMap<String, Object>();
-		response.put("flag", false);
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
 		String datetime = login.getDatetime();
 		MoodStateDTO moodStateDTO = new MoodStateDTO(0, memberId, datetime, 0);
-		moodStateDTO = norang2Service.selectMoodState(moodStateDTO);
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("flag", false);
+		moodStateDTO = norangService.selectMoodState(moodStateDTO);
 		if (moodStateDTO != null) {
 			response.put("flag", true);
 		}
@@ -101,11 +109,9 @@ public class Norang2Controller {
 	}
 
 	// 챌린지 저장
-	@PostMapping("/norang2/challenge")
+	@PostMapping("/api/norang/challenge")
 	public Map<String, Object> insertChallenge(HttpSession session, HttpServletRequest request,
 			ChallengeDTO challengeDTO, @RequestParam("multipartFile") MultipartFile multipartFile) throws Exception {
-		Map<String, Object> response = new HashMap<String, Object>();
-		response.put("flag", false);
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
 		Calendar calendar = Calendar.getInstance();
@@ -114,20 +120,27 @@ public class Norang2Controller {
 		String uploadPath = request.getSession().getServletContext().getRealPath("/")
 				.concat("resources\\images\\challenge");
 		multipartFile.transferTo(new File(uploadPath, memberId + "_" + datetime + ".png"));
-		challengeDTO.setMemberId(memberId);
-		challengeDTO.setDatetime(datetime);
-		int cnt = norang2Service.insertChallenge(challengeDTO);
-		if (cnt == 1) {
-			response.put("flag", true);
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("flag", false);
+		/* ----------이미지 분석---------- */
+		boolean result = getResult();
+		/* ----------------------------------- */
+		if (result) {
+			challengeDTO.setMemberId(memberId);
+			challengeDTO.setDatetime(datetime);
+			int cnt = norangService.insertChallenge(challengeDTO);
+			if (cnt == 1) {
+				login.setPoint(login.getPoint() + 5);
+				response.put("flag", true);
+			}
 		}
 		return response;
 	}
 
 	// 일일 데이터 저장
-	@PostMapping("/norang2/dailylog")
-	public Map<String, Object> insertDailyLog(HttpSession session, DailyLogDTO dailyLogDTO) throws Exception {
-		Map<String, Object> response = new HashMap<String, Object>();
-		response.put("flag", false);
+	@PostMapping("/api/norang/dailylog")
+	public Map<String, Object> insertDailyLog(HttpSession session, @RequestBody DailyLogDTO dailyLogDTO)
+			throws Exception {
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
 		Calendar calendar = Calendar.getInstance();
@@ -135,7 +148,9 @@ public class Norang2Controller {
 		String datetime = simpleDateFormat.format(calendar.getTime());
 		dailyLogDTO.setMemberId(memberId);
 		dailyLogDTO.setDatetime(datetime);
-		int cnt = norang2Service.insertDailyLog(dailyLogDTO);
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("flag", false);
+		int cnt = norangService.insertDailyLog(dailyLogDTO);
 		if (cnt == 1) {
 			response.put("flag", true);
 		}
@@ -143,24 +158,23 @@ public class Norang2Controller {
 	}
 
 	// 기분 상태 저장
-	@PostMapping("/norang2/moodstate")
-	public Map<String, Object> insertMoodState(HttpSession session, MoodStateDTO moodStateDTO) throws Exception {
-		Map<String, Object> response = new HashMap<String, Object>();
-		response.put("flag", false);
+	@PostMapping("/api/norang/moodstate")
+	public Map<String, Object> insertMoodState(HttpSession session, @RequestBody MoodStateDTO moodStateDTO)
+			throws Exception {
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
 		moodStateDTO.setMemberId(memberId);
-		int cnt = norang2Service.insertMoodState(moodStateDTO);
+		Map<String, Object> response = new HashMap<String, Object>();
+		response.put("flag", false);
+		int cnt = norangService.insertMoodState(moodStateDTO);
 		if (cnt == 1) {
 			response.put("flag", true);
 		}
 		return response;
 	}
 
-	// 에러 처리
-	@ExceptionHandler({ Exception.class })
-	public String error() throws Exception {
-		return "common/error";
+	private boolean getResult() {
+		return true;
 	}
 
 }

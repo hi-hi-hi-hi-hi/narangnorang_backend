@@ -4,7 +4,7 @@ import com.narangnorang.dto.ChallengeDTO;
 import com.narangnorang.dto.DailyLogDTO;
 import com.narangnorang.dto.MoodStateDTO;
 
-public interface Norang2Service {
+public interface NorangService {
 
 	// 챌린지 조회(하루)
 	public ChallengeDTO selectChallenge(ChallengeDTO challengeDTO) throws Exception;
