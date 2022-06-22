@@ -57,4 +57,8 @@ public class MiniroomDAO {
 	public List<ItemDTO> selectAllWishItems(int id) {
 		return sqlSession.selectList("com.config.MiniroomMapper.selectAllWishItems",id);
 	}
+	public MemberDTO selectMemberPoint(int id){
+		return sqlSession.selectOne("com.config.MiniroomMapper.selectMemberPoint",id);
+	}
+
 }

@@ -30,7 +30,8 @@ public class MiniroomController {
 		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
 		int id = mDTO.getId();
 		int privilege = mDTO.getPrivilege();
-		int point = mDTO.getPoint();
+		MemberDTO memberPointDTO = miniroomService.selectMemberPoint(id);
+		int point = memberPointDTO.getPoint();
 
 		MyRoomDTO myRoomDTO = new MyRoomDTO();
 		if(privilege == 3){
