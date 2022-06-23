@@ -33,5 +33,7 @@ public class MemberDTO {
 	private String address3;
 	private String job;
 	private String introduction;
+
+	private String photo;
 	
 }
