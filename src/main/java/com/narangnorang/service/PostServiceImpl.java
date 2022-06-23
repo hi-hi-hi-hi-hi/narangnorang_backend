@@ -75,6 +75,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public int insertReply(HashMap<String, Object> map) throws Exception {
 		dao.updateReplies(map);
+		dao.insertNoti((int)map.get("postId"));
 		return dao.insertReply((ReplyDTO)map.get("replyDto"));
 	}
 	

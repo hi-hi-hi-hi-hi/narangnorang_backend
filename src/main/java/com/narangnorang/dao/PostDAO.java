@@ -96,4 +96,8 @@ public class PostDAO {
 	public int deletePostLiker(int id) {
 		return session.delete("com.config.PostMapper.deletePostLiker", id);
 	}
+	
+	public int insertNoti(int id) {
+		return session.insert("com.config.PostMapper.insertNoti", id);
+	}
 }
