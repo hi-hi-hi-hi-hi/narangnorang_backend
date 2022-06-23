@@ -191,7 +191,7 @@ public class MemberController {
 
 	// 인증 이메일
 	@PostMapping("/api/sendMail")
-	public String sendMail(@RequestBody MemberDTO memberDTO) throws Exception{
+	public void sendMail(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception{
 		String email = memberDTO.getEmail();
 		Random random = new Random();  //난수 생성을 위한 랜덤 클래스
 		String key="";  //인증번호 
@@ -208,7 +208,17 @@ public class MemberController {
 		message.setSubject("인증번호 입력을 위한 메일 전송");
 		message.setText("인증 번호 : " + key);
 		javaMailSender.send(message);
-		return key;
+		session.setAttribute("key", key);
+	}
+
+	// 인증번호 확인
+	@PostMapping("/api/compare")
+	public boolean compare(HttpSession session, @RequestBody Map<String, String> map) throws Exception {
+		if(session.getAttribute("key").equals(map.get("com"))){
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	// 에러 처리
