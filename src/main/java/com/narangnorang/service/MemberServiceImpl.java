@@ -105,10 +105,4 @@ public class MemberServiceImpl implements MemberService {
 		return memberDAO.privileageUp(list);
 	}
 
-	// 프로필 사진 업데이트
-	@Override
-	public int photoUpdate(MemberDTO dto) throws Exception {
-		return memberDAO.photoUpdate(dto);
-	}
-
 }

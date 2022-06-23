@@ -102,7 +102,6 @@ public class MemberController {
 		memberDTO.setPassword(mDTO.getPassword());
 		memberDTO.setPrivilege(mDTO.getPrivilege());
 		memberDTO.setDatetime(mDTO.getDatetime());
-		memberDTO.setPhoto(mDTO.getPhoto());
 		memberDTO.setPoint(mDTO.getPoint());
 		session.setAttribute("login", memberDTO);
 		return memberService.generalEdit(memberDTO);
@@ -116,33 +115,25 @@ public class MemberController {
 		memberDTO.setPassword(mDTO.getPassword());
 		memberDTO.setPrivilege(mDTO.getPrivilege());
 		memberDTO.setDatetime(mDTO.getDatetime());
-		memberDTO.setPhoto(mDTO.getPhoto());
 		session.setAttribute("login", memberDTO);
 		return memberService.counselorEdit(memberDTO);
 	}
 
 	// 프로필 사진 수정
 	@PutMapping("/api/photoUpdate")
-	public int photoUpdate(HttpSession session, HttpServletRequest request, @RequestParam MultipartFile mFile) throws Exception {
+	public void photoUpdate(HttpSession session, HttpServletRequest request, @RequestParam MultipartFile mFile) throws Exception {
 		String uploadPath = request.getSession().getServletContext().getRealPath("/")
 				.concat("resources/images/member/");
 		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-		int cnt = 0;
 		try {
-			if (mDTO.getPhoto() != null) {
-				File file = new File(uploadPath + mDTO.getPhoto());
-				file.delete();
-			}
+			File file = new File(uploadPath + mDTO.getId());
+			file.delete();
+
 			String newName = String.valueOf(mDTO.getId());
 			mFile.transferTo(new File(uploadPath + newName + ".png"));
-
-			mDTO.setPhoto(newName);
-			cnt = memberService.photoUpdate(mDTO);
-			session.setAttribute("login", mDTO);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return cnt;
 	}
 
 	// 관리자 페이지 - 회원 관리
