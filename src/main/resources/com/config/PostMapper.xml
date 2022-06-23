@@ -203,5 +203,12 @@
 			where id = #{id}
 		]]>
 	</delete>
+	
+	<insert id="insertNoti" parameterType="int">
+		<![CDATA[
+			insert into notification ( id, post_id )
+			values ( seq_post_liker.nextval, #{postId} )
+		]]>
+	</insert>
 
 </mapper>
