@@ -1,14 +1,11 @@
 package com.narangnorang.controller;
 
 import com.narangnorang.dto.*;
-import com.narangnorang.service.MemberService;
 import com.narangnorang.service.MiniroomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpSession;
-import java.lang.reflect.Member;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +15,6 @@ public class MiniroomController {
 
 	@Autowired
 	MiniroomService miniroomService;
-
-	@Autowired
-	MemberService memberService;
 
 	// 홈 (로그인 O)
 	@ResponseBody

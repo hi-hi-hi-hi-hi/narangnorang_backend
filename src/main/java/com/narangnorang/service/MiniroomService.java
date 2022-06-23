@@ -2,7 +2,6 @@ package com.narangnorang.service;
 
 import java.util.HashMap;
 import java.util.List;
-
 import com.narangnorang.dto.*;
 
 public interface MiniroomService {
