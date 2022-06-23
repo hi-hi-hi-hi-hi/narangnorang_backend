@@ -20,7 +20,6 @@ public class MemberDTO {
 	private String name;
 	private String phone;
 	private String datetime;
-	private String photo;
 
 	// 일반
 	private String region;
