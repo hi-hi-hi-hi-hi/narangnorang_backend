@@ -16,14 +16,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.narangnorang.dto.MemberDTO;
+import com.narangnorang.dto.MyRoomDTO;
+import com.narangnorang.dto.NotificationDTO;
 import com.narangnorang.dto.PageDTO;
 import com.narangnorang.dto.PostDTO;
 import com.narangnorang.dto.PostLikerDTO;
 import com.narangnorang.dto.ReplyDTO;
+import com.narangnorang.service.MiniroomService;
 import com.narangnorang.service.PostService;
 
 @RestController
@@ -31,6 +33,8 @@ public class PostController {
 
 	@Autowired
 	PostService postService;
+	@Autowired
+	MiniroomService miniroomService;
 	
 	// 게시판 목록 보기
 	@GetMapping("/api/post/list")
@@ -128,10 +132,11 @@ public class PostController {
 		MemberDTO mDto = (MemberDTO)session.getAttribute("login");
 		replyDto.setMemberId(mDto.getId());
 		replyDto.setMemberName(mDto.getName());
+		PostDTO pDto = postService.selectById(Integer.parseInt(replyDto.getPostId()));
 		
 		map.put("amount", 1);
-		map.put("postId", replyDto.getPostId());
 		map.put("replyDto", replyDto);
+		map.put("postDto", pDto);
 		
 		return postService.insertReply(map);
 	}
@@ -177,6 +182,25 @@ public class PostController {
 		
 		return result;
 	}
+	
+	// 유저 미니홈
+	@GetMapping("/api/post/userhome")
+	public MyRoomDTO getUserHome(int id) throws Exception {
+		return miniroomService.selectMyRoom(id);
+	}
+	
+	// 댓글 알림 리스트
+	@GetMapping("/api/noti")
+	public List<NotificationDTO> selectNoti(int memberId) throws Exception{
+		return postService.selectNoti(memberId);
+	}
+	
+	// 댓글 알림 삭제
+	@DeleteMapping("/api/noti/{id}")
+	public int notiDelete(@PathVariable int id) throws Exception{
+		return postService.deleteNoti(id);
+	}
+	
 	
 	// 에러 처리
 	@ExceptionHandler({ Exception.class })

@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.narangnorang.dto.NotificationDTO;
 import com.narangnorang.dto.PageDTO;
 import com.narangnorang.dto.PostDTO;
 import com.narangnorang.dto.PostLikerDTO;
@@ -97,7 +98,15 @@ public class PostDAO {
 		return session.delete("com.config.PostMapper.deletePostLiker", id);
 	}
 	
-	public int insertNoti(int id) {
-		return session.insert("com.config.PostMapper.insertNoti", id);
+	public int insertNoti(PostDTO dto) {
+		return session.insert("com.config.PostMapper.insertNoti", dto);
+	}
+	
+	public List<NotificationDTO> selectNoti(int memberId){
+		return session.selectList("com.config.PostMapper.selectNoti", memberId);
+	}
+	
+	public int deleteNoti(int id) {
+		return session.delete("com.config.PostMapper.deleteNoti", id);
 	}
 }
