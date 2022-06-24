@@ -3,6 +3,7 @@ package com.narangnorang.service;
 import java.util.HashMap;
 import java.util.List;
 
+import com.narangnorang.dto.NotificationDTO;
 import com.narangnorang.dto.PageDTO;
 import com.narangnorang.dto.PostDTO;
 import com.narangnorang.dto.PostLikerDTO;
@@ -25,4 +26,6 @@ public interface PostService {
 	public int insertPostLiker(PostLikerDTO dto) throws Exception;
 	public List<PostLikerDTO> selectPostLiker(PostLikerDTO dto) throws Exception;
 	public int deletePostLiker(PostLikerDTO dto) throws Exception;
+	public List<NotificationDTO> selectNoti(int memberId) throws Exception;
+	public int deleteNoti(int id) throws Exception;
 }
