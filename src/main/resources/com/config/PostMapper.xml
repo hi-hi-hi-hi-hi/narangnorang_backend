@@ -162,7 +162,7 @@
 		<![CDATA[
 			update post
 			set replies =  replies + #{amount}
-			where id = #{replyDto.postId}
+			where id = #{postDto.id}
 		]]>
 	</update>
 	
