@@ -37,6 +37,13 @@ public class MiniroomController {
 		result.put("myRoomDTO",myRoomDTO);
 		return result;
 	}
+	
+	// 유저 미니홈 불러오기
+	@ResponseBody
+	@GetMapping("/api/home/profile")
+	public MyRoomDTO getUserHome(int id) throws Exception {
+		return miniroomService.selectMyRoom(id);
+	}
 
 	@GetMapping("/api/home/buy")
 	@ResponseBody

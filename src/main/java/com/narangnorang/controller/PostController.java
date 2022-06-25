@@ -183,12 +183,6 @@ public class PostController {
 		return result;
 	}
 	
-	// 유저 미니홈
-	@GetMapping("/api/post/userhome")
-	public MyRoomDTO getUserHome(int id) throws Exception {
-		return miniroomService.selectMyRoom(id);
-	}
-	
 	// 댓글 알림 리스트
 	@GetMapping("/api/noti")
 	public List<NotificationDTO> selectNoti(int memberId) throws Exception{
