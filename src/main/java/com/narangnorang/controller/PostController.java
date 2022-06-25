@@ -132,7 +132,7 @@ public class PostController {
 		MemberDTO mDto = (MemberDTO)session.getAttribute("login");
 		replyDto.setMemberId(mDto.getId());
 		replyDto.setMemberName(mDto.getName());
-		PostDTO pDto = postService.selectById(Integer.parseInt(replyDto.getPostId()));
+		PostDTO pDto = postService.selectById(replyDto.getPostId());
 		
 		map.put("amount", 1);
 		map.put("replyDto", replyDto);
@@ -142,13 +142,14 @@ public class PostController {
 	}
 	
 	// 댓글 삭제
-	@DeleteMapping("/post/reply")
+	@DeleteMapping("/api/post/reply")
 	public int deleteReply(int postId, int replyId) throws Exception{
 		HashMap<String, Object> map = new HashMap<>();
 		
 		map.put("amount", -1);
-		map.put("postId", postId);
 		map.put("replyId", replyId);
+		PostDTO pDto = postService.selectById(postId);
+		map.put("postDto", pDto);
 		
 		int result = postService.deleteReply(map);
 		return result;
@@ -181,12 +182,6 @@ public class PostController {
 		}
 		
 		return result;
-	}
-	
-	// 유저 미니홈
-	@GetMapping("/api/post/userhome")
-	public MyRoomDTO getUserHome(int id) throws Exception {
-		return miniroomService.selectMyRoom(id);
 	}
 	
 	// 댓글 알림 리스트

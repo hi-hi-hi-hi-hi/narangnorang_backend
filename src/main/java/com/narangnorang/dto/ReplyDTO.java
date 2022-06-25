@@ -14,7 +14,7 @@ public class ReplyDTO {
 
 	private int id;
 	private int memberId;
-	private String postId;
+	private int postId;
 	private String content;
 	private String datetime;
 	private int likes;
