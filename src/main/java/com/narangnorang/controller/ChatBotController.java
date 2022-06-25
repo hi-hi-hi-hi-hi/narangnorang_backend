@@ -21,13 +21,13 @@ import com.narangnorang.dto.ChallengeDTO;
 import com.narangnorang.dto.DailyLogDTO;
 import com.narangnorang.dto.MemberDTO;
 import com.narangnorang.dto.MoodStateDTO;
-import com.narangnorang.service.NorangService;
+import com.narangnorang.service.ChatBotService;
 
 @RestController
-public class NorangController {
+public class ChatBotController {
 
 	@Autowired
-	NorangService norangService;
+	ChatBotService chatBotService;
 
 	// 챌린지 조회(하루)
 	@GetMapping("/api/norang/challenge")
@@ -40,7 +40,7 @@ public class NorangController {
 		ChallengeDTO challengeDTO = new ChallengeDTO(0, memberId, datetime, null);
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("flag", false);
-		challengeDTO = norangService.selectChallenge(challengeDTO);
+		challengeDTO = chatBotService.selectChallenge(challengeDTO);
 		if (challengeDTO != null) {
 			response.put("flag", true);
 		} else {
@@ -85,7 +85,7 @@ public class NorangController {
 		DailyLogDTO dailyLogDTO = new DailyLogDTO(0, memberId, datetime, 0, null);
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("flag", false);
-		dailyLogDTO = norangService.selectDailyLog(dailyLogDTO);
+		dailyLogDTO = chatBotService.selectDailyLog(dailyLogDTO);
 		if (dailyLogDTO != null) {
 			response.put("flag", true);
 		}
@@ -101,7 +101,7 @@ public class NorangController {
 		MoodStateDTO moodStateDTO = new MoodStateDTO(0, memberId, datetime, 0);
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("flag", false);
-		moodStateDTO = norangService.selectMoodState(moodStateDTO);
+		moodStateDTO = chatBotService.selectMoodState(moodStateDTO);
 		if (moodStateDTO != null) {
 			response.put("flag", true);
 		}
@@ -128,7 +128,7 @@ public class NorangController {
 		if (result) {
 			challengeDTO.setMemberId(memberId);
 			challengeDTO.setDatetime(datetime);
-			int cnt = norangService.insertChallenge(challengeDTO);
+			int cnt = chatBotService.insertChallenge(challengeDTO);
 			if (cnt == 1) {
 				login.setPoint(login.getPoint() + 5);
 				response.put("flag", true);
@@ -150,7 +150,7 @@ public class NorangController {
 		dailyLogDTO.setDatetime(datetime);
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("flag", false);
-		int cnt = norangService.insertDailyLog(dailyLogDTO);
+		int cnt = chatBotService.insertDailyLog(dailyLogDTO);
 		if (cnt == 1) {
 			response.put("flag", true);
 		}
@@ -166,7 +166,7 @@ public class NorangController {
 		moodStateDTO.setMemberId(memberId);
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("flag", false);
-		int cnt = norangService.insertMoodState(moodStateDTO);
+		int cnt = chatBotService.insertMoodState(moodStateDTO);
 		if (cnt == 1) {
 			response.put("flag", true);
 		}
