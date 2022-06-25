@@ -3,21 +3,19 @@ package com.narangnorang.controller;
 import com.narangnorang.dto.*;
 import com.narangnorang.service.MiniroomService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+@RestController
 public class MiniroomController {
 
 	@Autowired
 	MiniroomService miniroomService;
 
 	// 홈 (로그인 O)
-	@ResponseBody
 	@GetMapping("/api/home")
 	public HashMap<String, Object> home(HttpSession session) throws Exception {
 
@@ -39,7 +37,6 @@ public class MiniroomController {
 	}
 
 	@GetMapping("/api/home/buy")
-	@ResponseBody
 	public HashMap<String, Object> buy(@RequestParam(value="category",required=false,defaultValue="bed") String category
 	,HttpSession session) throws Exception {
 		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
@@ -55,7 +52,6 @@ public class MiniroomController {
 	}
 
 	@GetMapping("/api/home/style")
-	@ResponseBody
 	public HashMap<String, Object> style(@RequestParam(value="category",required=false,defaultValue="bed") String category
 	,HttpSession session) throws Exception {
 		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
@@ -74,7 +70,6 @@ public class MiniroomController {
 	}
 
 	@GetMapping("/api/home/wish")
-	@ResponseBody
 	public HashMap<String, Object> wish(HttpSession session) throws Exception {
 		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
 		int id = mDTO.getId();
@@ -90,7 +85,6 @@ public class MiniroomController {
 	//물건 구매
 
 	@PostMapping("/api/home/buy")
-	@ResponseBody
 	public String buy(@RequestBody Map<String, Object> paramMap, HttpSession session) throws Exception {
 		Map<String, Object> map2 = (Map<String, Object>) paramMap.get("data");
 		int id = (int)map2.get("id");
@@ -138,7 +132,6 @@ public class MiniroomController {
 	}
 
 	// 위시리스트 추가
-	@ResponseBody
 	@PostMapping("api//home/buy/{itemId}")
 	public String wishupdate(@PathVariable("itemId") int itemId,HttpSession session) throws Exception{
 
@@ -168,7 +161,6 @@ public class MiniroomController {
 	}
 
 	//미니룸에 내아이템 적용
-	@ResponseBody
 	@PutMapping("/api/home/style")
 	public int applyMiniroom(HttpSession session,@RequestBody Map<String, Object> paramMap) throws Exception{
 		HashMap<String,Object> map = (HashMap<String, Object>) paramMap.get("data");
