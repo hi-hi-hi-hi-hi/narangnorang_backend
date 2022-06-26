@@ -156,8 +156,8 @@ public class PostController {
 	}
 	
 	// 댓글 수정
-	@PutMapping("/post/reply")
-	public int updateReplyContent(ReplyDTO replyDto) throws Exception{
+	@PutMapping("/api/post/reply")
+	public int updateReplyContent(@RequestBody ReplyDTO replyDto) throws Exception{
 		return postService.updateReplyContent(replyDto);
 	}
 	
