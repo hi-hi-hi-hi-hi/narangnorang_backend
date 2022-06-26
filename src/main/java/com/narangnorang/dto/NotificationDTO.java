@@ -9,16 +9,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Alias("ReplyDTO")
-public class ReplyDTO {
+@Alias("NotificationDTO")
+public class NotificationDTO {
 
 	private int id;
 	private int memberId;
 	private int postId;
-	private String content;
-	private String datetime;
-	private int likes;
-	// Member
-	private String memberName;
-
+	// 게시글 정보
+	private String postTitle;
+	private String postCategory;
 }

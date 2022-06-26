@@ -125,13 +125,6 @@
 		</where>
 	</update>
 
-	<!-- 프로필 사진 업데이트 -->
-	<update id="photoUpdate" parameterType="MemberDTO">
-		UPDATE member
-		SET photo = #{id}
-		WHERE id = #{id}
-	</update>
-
 	<!-- 접속일시 업데이트 -->
 	<update id="updateDatetime" parameterType="hashmap">
 		UPDATE member

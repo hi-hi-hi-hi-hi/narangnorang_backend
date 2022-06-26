@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.narangnorang.dao.PostDAO;
+import com.narangnorang.dto.NotificationDTO;
 import com.narangnorang.dto.PageDTO;
 import com.narangnorang.dto.PostDTO;
 import com.narangnorang.dto.PostLikerDTO;
@@ -75,6 +76,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public int insertReply(HashMap<String, Object> map) throws Exception {
 		dao.updateReplies(map);
+		dao.insertNoti((PostDTO)map.get("postDto"));
 		return dao.insertReply((ReplyDTO)map.get("replyDto"));
 	}
 	
@@ -107,6 +109,16 @@ public class PostServiceImpl implements PostService {
 	public int deletePostLiker(PostLikerDTO dto) throws Exception {
 		dao.minusPostLike(dto.getPostId());
 		return dao.deletePostLiker(dto.getId());
+	}
+
+	@Override
+	public List<NotificationDTO> selectNoti(int memberId) throws Exception {
+		return dao.selectNoti(memberId);
+	}
+
+	@Override
+	public int deleteNoti(int id) throws Exception {
+		return dao.deleteNoti(id);
 	}
 
 }

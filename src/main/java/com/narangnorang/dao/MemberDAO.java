@@ -80,11 +80,6 @@ public class MemberDAO {
 		return sqlSession.update("com.config.MemberMapper.privileageUp", list);
 	}
 
-	// 프로필 사진 업데이트
-	public int photoUpdate(MemberDTO dto) throws Exception {
-		return sqlSession.update("com.config.MemberMapper.photoUpdate", dto);
-	}
-
 	// 접속일시 업데이트
 	public int updateDatetime(Map<String, String> map) throws Exception {
 		return sqlSession.update("com.config.MemberMapper.updateDatetime", map);

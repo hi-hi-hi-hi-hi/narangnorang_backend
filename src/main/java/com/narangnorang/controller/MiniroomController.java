@@ -41,6 +41,7 @@ public class MiniroomController {
 	public MyRoomDTO getUserHome(int id) throws Exception {
 		return miniroomService.selectMyRoom(id);
 	}
+  
 	@GetMapping("/api/home/buy")
 	public HashMap<String, Object> buy(@RequestParam(value="category",required=false,defaultValue="bed") String category
 	,HttpSession session) throws Exception {

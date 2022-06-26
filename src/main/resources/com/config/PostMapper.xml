@@ -162,7 +162,7 @@
 		<![CDATA[
 			update post
 			set replies =  replies + #{amount}
-			where id = #{postId}
+			where id = #{postDto.id}
 		]]>
 	</update>
 	
@@ -200,6 +200,31 @@
 	<delete id="deletePostLiker" parameterType="int">
 		<![CDATA[
 			delete from post_liker
+			where id = #{id}
+		]]>
+	</delete>
+	
+	<insert id="insertNoti" parameterType="PostDTO">
+		<![CDATA[
+			insert into notification ( id, post_id, member_id )
+			values ( seq_notification.nextval, #{id}, #{memberId} )
+		]]>
+	</insert>
+	
+	<select id="selectNoti" parameterType="int" resultType="NotificationDTO">
+		<![CDATA[
+			select n.id, n.post_id, p.title as postTitle, p.category as postCategory
+			from notification n
+			inner join post p
+			on n.post_id = p.id
+			where p.member_id = #{memberId} and rownum <= 5
+			order by n.id desc
+		]]>
+	</select>
+	
+	<delete id="deleteNoti" parameterType="int">
+		<![CDATA[
+			delete from notification
 			where id = #{id}
 		]]>
 	</delete>
