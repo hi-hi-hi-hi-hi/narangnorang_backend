@@ -55,8 +55,6 @@ public class MiniroomController {
 		List<MyItemDTO> myItemList =  miniroomService.selectAllMyItems(map);
 		result.put("itemList",list);
 		result.put("myItemList",myItemList);
-		List<ItemDTO> wishlist =  miniroomService.selectAllWishItems(id);
-		result.put("wishItemList",wishlist);
 		return result;
 	}
 
