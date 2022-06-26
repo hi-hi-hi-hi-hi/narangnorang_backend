@@ -35,37 +35,27 @@ public class MiniroomController {
 		result.put("myRoomDTO",myRoomDTO);
 		return result;
 	}
-
+	
+	// 유저 미니홈 불러오기
+	@GetMapping("/api/home/profile")
+	public MyRoomDTO getUserHome(int id) throws Exception {
+		return miniroomService.selectMyRoom(id);
+	}
 	@GetMapping("/api/home/buy")
 	public HashMap<String, Object> buy(@RequestParam(value="category",required=false,defaultValue="bed") String category
 	,HttpSession session) throws Exception {
 		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
 		int id = mDTO.getId();
 		HashMap<String, Object> result = new HashMap<>();
-		List<ItemDTO> list =  miniroomService.selectAllItems(category);
-		MyRoomDTO myRoomDTO = miniroomService.selectMyRoom(id);
-		myRoomDTO.setMemberId(id);
-		result.put("itemList",list);
-		result.put("memberId",id);
-
-		return result;
-	}
-
-	@GetMapping("/api/home/style")
-	public HashMap<String, Object> style(@RequestParam(value="category",required=false,defaultValue="bed") String category
-	,HttpSession session) throws Exception {
-		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
-		int id = mDTO.getId();
 		HashMap<String, Object> map = new HashMap<>();
-		HashMap<String, Object> result = new HashMap<>();
-
-		List<ItemDTO> itemList =  miniroomService.selectAllItems(category);
 		map.put("category", category);
 		map.put("id",id);
+		List<ItemDTO> list =  miniroomService.selectAllItems(category);
 		List<MyItemDTO> myItemList =  miniroomService.selectAllMyItems(map);
+		result.put("itemList",list);
 		result.put("myItemList",myItemList);
-		result.put("itemList",itemList);
-		result.put("memberId",id);
+		List<ItemDTO> wishlist =  miniroomService.selectAllWishItems(id);
+		result.put("wishItemList",wishlist);
 		return result;
 	}
 
@@ -73,12 +63,9 @@ public class MiniroomController {
 	public HashMap<String, Object> wish(HttpSession session) throws Exception {
 		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
 		int id = mDTO.getId();
-		HashMap<String,Object> map = new HashMap<>();
-		HashMap<String,Object> result = new HashMap<>();
+		HashMap<String, Object> result = new HashMap<>();
 		List<ItemDTO> list =  miniroomService.selectAllWishItems(id);
 		result.put("wishItemList",list);
-		result.put("memberId",id);
-
 		return result;
 	}
 
