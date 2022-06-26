@@ -30,7 +30,7 @@ public class ChatBotController {
 	ChatBotService chatBotService;
 
 	// 챌린지 조회(하루)
-	@GetMapping("/api/norang/challenge")
+	@GetMapping("/api/chatbot/challenge")
 	public Map<String, Object> selectChallenge(HttpSession session) throws Exception {
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
@@ -75,7 +75,7 @@ public class ChatBotController {
 	}
 
 	// 일일 데이터 조회(하루)
-	@GetMapping("/api/norang/dailylog")
+	@GetMapping("/api/chatbot/dailylog")
 	public Map<String, Object> selectDailyLog(HttpSession session) throws Exception {
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
@@ -93,7 +93,7 @@ public class ChatBotController {
 	}
 
 	// 기분 상태 조회(접속일시 이후)
-	@GetMapping("/api/norang/moodstate")
+	@GetMapping("/api/chatbot/moodstate")
 	public Map<String, Object> selectMoodState(HttpSession session) throws Exception {
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
 		int memberId = login.getId();
@@ -109,7 +109,7 @@ public class ChatBotController {
 	}
 
 	// 챌린지 저장
-	@PostMapping("/api/norang/challenge")
+	@PostMapping("/api/chatbot/challenge")
 	public Map<String, Object> insertChallenge(HttpSession session, HttpServletRequest request,
 			ChallengeDTO challengeDTO, @RequestParam("multipartFile") MultipartFile multipartFile) throws Exception {
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
@@ -138,7 +138,7 @@ public class ChatBotController {
 	}
 
 	// 일일 데이터 저장
-	@PostMapping("/api/norang/dailylog")
+	@PostMapping("/api/chatbot/dailylog")
 	public Map<String, Object> insertDailyLog(HttpSession session, @RequestBody DailyLogDTO dailyLogDTO)
 			throws Exception {
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
@@ -158,7 +158,7 @@ public class ChatBotController {
 	}
 
 	// 기분 상태 저장
-	@PostMapping("/api/norang/moodstate")
+	@PostMapping("/api/chatbot/moodstate")
 	public Map<String, Object> insertMoodState(HttpSession session, @RequestBody MoodStateDTO moodStateDTO)
 			throws Exception {
 		MemberDTO login = (MemberDTO) session.getAttribute("login");
