@@ -14,7 +14,7 @@
 
 	<select id="selectAllWishItems" resultType="ItemDTO" parameterType="int">
 	<![CDATA[
-		select i.id, i.category, i.name, i.price
+		select i.id, i.price
 		from ITEM i
 				 Inner Join MY_ITEM m
 							ON m.item_id = i.id
