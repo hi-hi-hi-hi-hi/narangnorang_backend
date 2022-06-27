@@ -63,9 +63,10 @@ public class MiniroomServiceImpl implements MiniroomService {
 		MyRoomDTO myRoomDTO = miniroomDAO.selectMyRoom(id) ;
 		return myRoomDTO;
 	}
-
+	@Transactional
 	@Override
-	public int wishZero(HashMap<String, Object> map) {
+	public int wishZero(HashMap<String, Object> map, HashMap<String, Integer> pointMap) {
+		miniroomDAO.updatePoint(pointMap);
 		return miniroomDAO.wishZero(map);
 	}
 
@@ -75,7 +76,7 @@ public class MiniroomServiceImpl implements MiniroomService {
 	}
 
 	@Override
-	public MemberDTO selectMemberPoint(int id) {
-		return miniroomDAO.selectMemberPoint(id);
+	public MemberDTO selectMemberPoint(int memberId) {
+		return miniroomDAO.selectMemberPoint(memberId);
 	}
 }

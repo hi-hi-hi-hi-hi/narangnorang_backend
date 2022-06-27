@@ -108,7 +108,7 @@
 	<select id="selectMemberPoint" parameterType="int" resultType="MemberDTO">
 	<![CDATA[
 		SELECT * FROM member
-		WHERE id = #{id}
+		WHERE id = #{memberId}
 		]]>
 	</select>
 
