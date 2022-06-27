@@ -43,18 +43,14 @@ public class MemberServiceImpl implements MemberService {
 	@Transactional
 	@Override
 	public int generalSignUp(MemberDTO dto) throws Exception {
-
 		String name = dto.getName();
-		return memberDAO.generalSignUp(dto) & miniroomDAO.insertDefaultItems(name);
-
+		return memberDAO.generalSignUp(dto) & miniroomDAO.insertDefaultItems(name) & miniroomDAO.insertDefaultMyItems1() & miniroomDAO.insertDefaultMyItems2();
 	}
 
 	// 상담사 회원가입
-	@Transactional
 	@Override
 	public int counselorSignUp(MemberDTO dto) throws Exception {
-		String name = dto.getName();
-		return memberDAO.counselorSignUp(dto) & miniroomDAO.insertDefaultItems(name);
+		return memberDAO.counselorSignUp(dto);
 	}
 
 	// email로 회원 찾기
