@@ -24,6 +24,12 @@ public class MiniroomDAO {
 	public int insertDefaultItems(String name) {
 		return sqlSession.insert("com.config.MiniroomMapper.insertDefaultItems",name);
 	}
+	public int insertDefaultMyItems1() {
+		return sqlSession.insert("com.config.MiniroomMapper.insertDefaultMyItems1");
+	}
+	public int insertDefaultMyItems2() {
+		return sqlSession.insert("com.config.MiniroomMapper.insertDefaultMyItems2");
+	}
 	public int applyMiniroom(HashMap<String, Object>map){
 		return sqlSession.update("com.config.MiniroomMapper.applyMiniroom",map);
 	}
