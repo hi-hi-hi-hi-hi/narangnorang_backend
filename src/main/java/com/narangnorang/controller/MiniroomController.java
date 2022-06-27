@@ -81,8 +81,8 @@ public class MiniroomController {
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("itemId", id);
 		map.put("memberId", memberId);
-
-		int point = mDTO.getPoint();
+		MemberDTO memberPointDTO = miniroomService.selectMemberPoint(memberId);
+		int point = memberPointDTO.getPoint();
 
 		//price랑 memberId 등록.
 		HashMap<String, Integer> pointMap = new HashMap<>();
@@ -107,8 +107,8 @@ public class MiniroomController {
 			if (check.getWish()==0){
 				mesg="이미 구매한 상품입니다.";
 			}else if (point >= price && point >= 0){
-				miniroomService.wishZero(map);
-				mesg="위시리스트 상품을 구매했습니다.";
+				miniroomService.wishZero(map, pointMap);
+				mesg="구매완료, 위시리스트 상품을 구매했습니다.";
 			}else{
 				mesg="포인트가 부족합니다.";
 			}
