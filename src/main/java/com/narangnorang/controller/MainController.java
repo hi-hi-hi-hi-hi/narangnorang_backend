@@ -9,7 +9,7 @@ public class MainController {
 	// 메인 (로그인 X)
 	@GetMapping("/")
 	public String main() throws Exception {
-		return "index";
+		return "index.html";
 	}
 
 }
