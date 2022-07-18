@@ -23,7 +23,7 @@ public class PrincipalDetails implements UserDetails {
         collect.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                // return memberDTO.getPrivilege();
+                 return memberDTO.getName();
             }
         });
         return collect;
