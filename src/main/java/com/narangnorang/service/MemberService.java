@@ -1,5 +1,6 @@
 package com.narangnorang.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,5 +46,9 @@ public interface MemberService {
 
 	// 선택 상담사 승급
 	public int privileageUp(List<String> list) throws Exception;
+	
+	// 카카오 로그인
+	public String getKakaoAccessToken(String authorize_code);
+	public HashMap<String, String> getKakaoUserInfo(String access_Token);
 
 }
