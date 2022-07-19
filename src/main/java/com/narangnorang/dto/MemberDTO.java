@@ -13,13 +13,14 @@ import lombok.NoArgsConstructor;
 public class MemberDTO {
 	
 	// 공통
-	private int id;
+	private Integer id;
 	private String email;
 	private String password;
 	private int privilege;
 	private String name;
 	private String phone;
 	private String datetime;
+	private String role;
 
 	// 일반
 	private String region;
