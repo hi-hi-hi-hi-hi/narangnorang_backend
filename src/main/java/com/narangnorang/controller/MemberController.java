@@ -11,9 +11,11 @@ import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.narangnorang.config.auth.PrincipalDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,11 +44,11 @@ public class MemberController {
 
 	// 로그인
 	@PostMapping("/api/login")
-	public void login(Authentication authentication, @RequestParam Map<String, String> map) throws Exception {
+	public MemberDTO login(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestParam Map<String, String> map) throws Exception {
 //		MemberDTO memberDTO = memberService.selectMember(map);
 //		session.setAttribute("login", memberDTO);
 //		return memberDTO;
-//		return authentication.get
+		return principalDetails.getMemberDTO();
 	}
 
 	// 로그아웃
