@@ -22,7 +22,6 @@ public class PrincipalDetailsService implements UserDetailsService {
         try {
             MemberDTO member = memberService.selectByEmail(username);
             if(member != null){
-                System.out.println(member);
                 return new PrincipalDetails(member);
             }
         } catch (Exception e) {

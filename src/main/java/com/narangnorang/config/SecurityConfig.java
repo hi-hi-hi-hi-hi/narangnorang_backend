@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("email")
                 .loginPage("/login")
                 .loginProcessingUrl("/api/login")
-                .defaultSuccessUrl("/home")
+                .successForwardUrl("/api/login")
 
 //                .and()
 //                .oauth2Login()
