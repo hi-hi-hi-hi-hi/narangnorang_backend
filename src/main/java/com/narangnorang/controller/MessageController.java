@@ -10,7 +10,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import com.narangnorang.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,6 +33,8 @@ public class MessageController {
 
 	@Autowired
 	MessageService messageService;
+	@Autowired
+	MemberService memberService;
 
 	@GetMapping("/api/message/list")
 	public Map<String, Object> selectMessageList(HttpSession session) throws Exception {
@@ -99,9 +103,11 @@ public class MessageController {
 	}
 
 	@GetMapping("/api/message/unread")
-	public Map<String, Object> countUnread(HttpSession session) throws Exception {
+	public Map<String, Object> countUnread(Authentication authentication) throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
-		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
+		String email = authentication.getName();
+		MemberDTO memberDTO = memberService.selectByEmail(email);
+//		MemberDTO memberDTO = (MemberDTO) session.getAttribute("login");
 		
 		int userId = memberDTO.getId();
 		int unreadCounts = messageService.countUnread(userId);

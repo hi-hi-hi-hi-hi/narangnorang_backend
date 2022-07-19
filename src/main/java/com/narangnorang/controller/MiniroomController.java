@@ -1,10 +1,17 @@
 package com.narangnorang.controller;
 
+import com.narangnorang.config.auth.PrincipalDetails;
 import com.narangnorang.dto.*;
+import com.narangnorang.service.MemberService;
 import com.narangnorang.service.MiniroomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +21,15 @@ public class MiniroomController {
 
 	@Autowired
 	MiniroomService miniroomService;
+	@Autowired
+	MemberService memberService;
 
 	// 홈 (로그인 O)
 	@GetMapping("/api/home")
-	public HashMap<String, Object> home(HttpSession session) throws Exception {
+	public HashMap<String, Object> home(Authentication authentication) throws Exception {
 
-		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
+		String email = authentication.getName();
+		MemberDTO mDTO = memberService.selectByEmail(email);
 		int id = mDTO.getId();
 		int privilege = mDTO.getPrivilege();
 		MemberDTO memberPointDTO = miniroomService.selectMemberPoint(id);

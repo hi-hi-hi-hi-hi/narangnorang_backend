@@ -9,6 +9,8 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,13 +24,16 @@ public class MemberController {
 	MemberService memberService;
 	@Autowired
 	JavaMailSender javaMailSender;
+	@Autowired
+	BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	// 로그인
 	@PostMapping("/api/login")
-	public MemberDTO login(HttpSession session, @RequestParam Map<String, String> map) throws Exception {
-		MemberDTO memberDTO = memberService.selectMember(map);
-		session.setAttribute("login", memberDTO);
-		return memberDTO;
+	public void login(Authentication authentication, @RequestParam Map<String, String> map) throws Exception {
+//		MemberDTO memberDTO = memberService.selectMember(map);
+//		session.setAttribute("login", memberDTO);
+//		return memberDTO;
+//		return authentication.get
 	}
 
 	// 로그아웃
@@ -47,12 +52,18 @@ public class MemberController {
 	// 일반회원가입 처리
 	@PostMapping("/api/generalSignUp")
 	public int insertGeneral(MemberDTO memberDTO) throws Exception {
+		String rawPassWord = memberDTO.getPassword();
+		String encPassWord = bCryptPasswordEncoder.encode(rawPassWord);
+		memberDTO.setPassword(encPassWord);
 		return memberService.generalSignUp(memberDTO);
 	}
 
 	// 상담사 회원가입 처리
 	@PostMapping("/api/counselorSignUp")
 	public int insertCounselor(MemberDTO memberDTO) throws Exception {
+		String rawPassWord = memberDTO.getPassword();
+		String encPassWord = bCryptPasswordEncoder.encode(rawPassWord);
+		memberDTO.setPassword(encPassWord);
 		return memberService.counselorSignUp(memberDTO);
 	}
 
@@ -81,16 +92,22 @@ public class MemberController {
 	@PutMapping("/api/newPw")
 	public int newPw(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
 		MemberDTO mDTO = (MemberDTO) session.getAttribute("findPw");
-		mDTO.setPassword(memberDTO.getPassword());
-		System.out.println(mDTO);
+		String rawPassWord = memberDTO.getPassword();
+		String encPassWord = bCryptPasswordEncoder.encode(rawPassWord);
+		mDTO.setPassword(encPassWord);
 		return memberService.newPw(mDTO);
 	}
 
 	@PutMapping("/api/myPage/newPw")
-	public int myPageNewPw(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
-		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-		mDTO.setPassword(memberDTO.getPassword());
-		session.setAttribute("login", mDTO);
+	public int myPageNewPw(Authentication authentication, HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
+		String email = authentication.getName();
+		MemberDTO mDTO = memberService.selectByEmail(email);
+//		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
+		String rawPassWord = memberDTO.getPassword();
+		String encPassWord = bCryptPasswordEncoder.encode(rawPassWord);
+		mDTO.setPassword(encPassWord);
+//		mDTO.setPassword(memberDTO.getPassword());
+//		session.setAttribute("login", mDTO);
 		return memberService.newPw(mDTO);
 	}
 
