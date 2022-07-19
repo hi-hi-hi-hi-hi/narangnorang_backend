@@ -1,8 +1,6 @@
 package com.narangnorang.config.auth;
 
 import com.narangnorang.dto.MemberDTO;
-import lombok.Getter;
-import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,7 +9,7 @@ import java.util.Collection;
 
 public class PrincipalDetails implements UserDetails {
 
-    private MemberDTO memberDTO;
+    MemberDTO memberDTO;
 
     public PrincipalDetails(MemberDTO memberDTO) {
         this.memberDTO = memberDTO;
@@ -23,7 +21,7 @@ public class PrincipalDetails implements UserDetails {
         collect.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                 return memberDTO.getName();
+                return memberDTO.getRole();
             }
         });
         return collect;
@@ -31,32 +29,32 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return memberDTO.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return memberDTO.getEmail();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
 }
