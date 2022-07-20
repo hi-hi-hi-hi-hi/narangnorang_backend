@@ -20,15 +20,13 @@ public class WebSocketController {
 	private MessageService messageService;
 	private final SimpMessagingTemplate simpMessagingTemplate;
 
-	@MessageMapping("/api/receive")
-	@SendTo("/api/send")
+	@MessageMapping("/ws/message")
+	@SendTo("/ws/member")
 	public void WebSocketHandler(Map<String, Object> map) throws Exception {
-		System.out.println("before map : " + map);
 		if ("message".equals(map.get("type"))) {
 			messageService.sendMessage(map);
-			simpMessagingTemplate.convertAndSend("/api/send/" + map.get("recieverId"), map);
+			simpMessagingTemplate.convertAndSend("/ws/member/" + map.get("recieverId"), map);
 		}
-		System.out.println("after map : " + map);
 	}
 
 }
