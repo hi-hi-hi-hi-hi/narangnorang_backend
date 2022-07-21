@@ -124,6 +124,13 @@
             <version>2.8.5</version>
         </dependency>
 		<!-- GSON -->
+		
+		<!-- websocket -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+		<!-- websocket -->
 	</dependencies>
 
 	<build>
