@@ -50,5 +50,6 @@ public interface MemberService {
 	// 카카오 로그인
 	public String getKakaoAccessToken(String authorize_code);
 	public HashMap<String, String> getKakaoUserInfo(String access_Token);
+	public MemberDTO selectByKakaoId(String kakaoId) throws Exception;
 
 }
