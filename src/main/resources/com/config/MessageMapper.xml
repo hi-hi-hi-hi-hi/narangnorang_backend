@@ -4,28 +4,25 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.config.MessageMapper">
 
-	<!-- 쪽지 List -->
-	<select id="selectMessageList" resultType="MessageDTO"
+	<select id="getMessageList" resultType="MessageDTO"
 		parameterType="Integer">
-		<![CDATA[
-			SELECT *
-			FROM message
-			WHERE (sender_id = ${userId} OR reciever_id = ${userId}) AND datetime in (select max(datetime) from message group by sender_id, reciever_id)
-			ORDER BY datetime desc
-		]]>
+	<![CDATA[
+		SELECT *
+		FROM message
+		WHERE (sender_id = ${userId} OR reciever_id = ${userId}) AND datetime in (select max(datetime) from message group by sender_id, reciever_id)
+		ORDER BY datetime desc
+	]]>
 	</select>
 
-	<!-- 쪽지 보내기 -->
-	<insert id="sendMessage" parameterType="hashmap">
+	<update id="readMessages" parameterType="hashmap">
 	<![CDATA[
-		INSERT INTO message ( id, sender_id, sender_name, sender_privilege, reciever_id, reciever_name, reciever_privilege, content)
-		values (seq_message.nextval, #{senderId}, #{senderName}, #{senderPrivilege}, #{recieverId}, #{recieverName}, #{recieverPrivilege}, #{content}) 
-	
+		UPDATE message
+		SET read = 1
+		WHERE sender_id = ${otherId} AND reciever_id = ${userId}
 	]]>
-	</insert>
+	</update>
 
-	<!-- 특정 사용자와 대화내역 가져오기 -->
-	<select id="getChats" resultType="MessageDTO"
+	<select id="getMessageHistory" resultType="MessageDTO"
 		parameterType="hashmap">
 	<![CDATA[
 		SELECT *
@@ -35,22 +32,20 @@
 	]]>
 	</select>
 
-	<!-- 쪽지 확인 -->
-	<update id="readMessage" parameterType="hashmap">
+	<select id="getUnreads" resultType="MessageDTO"
+		parameterType="int">
 	<![CDATA[
-		UPDATE message
-		SET read = 1
-		WHERE sender_id = ${otherId} AND reciever_id = ${userId}
-	]]>
-	</update>
-
-	<!-- 확인하지 않은 쪽지 수 -->
-	<select id="countUnread" resultType="int" parameterType="int">
-	<![CDATA[
-		SELECT count(*)
+		SELECT *
 		FROM message
 		WHERE read = 0 AND reciever_id = ${userId}
 	]]>
 	</select>
+
+	<insert id="sendMessage" parameterType="hashmap">
+	<![CDATA[
+		INSERT INTO message ( id, sender_id, sender_name, sender_privilege, reciever_id, reciever_name, reciever_privilege, content)
+		values (seq_message.nextval, #{senderId}, #{senderName}, #{senderPrivilege}, #{recieverId}, #{recieverName}, #{recieverPrivilege}, #{content})
+	]]>
+	</insert>
 
 </mapper>

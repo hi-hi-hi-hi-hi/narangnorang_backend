@@ -15,29 +15,24 @@ public class MessageDAO {
 	@Autowired
 	SqlSession sqlSession;
 
-	// 메세지 리스트
-	public List<MessageDTO> selectMessageList(int userId) throws Exception {
-		return sqlSession.selectList("com.config.MessageMapper.selectMessageList", userId);
+	public List<MessageDTO> getMessageList(int userId) throws Exception {
+		return sqlSession.selectList("com.config.MessageMapper.getMessageList", userId);
 	}
 
-	// 메시지 전송 (insert)
-	public int sendMessage(Map<String, Object> messageInfo) throws Exception {
-		return sqlSession.insert("com.config.MessageMapper.sendMessage", messageInfo);
+	public int readMessages(Map<String, Object> map) {
+		return sqlSession.update("com.config.MessageMapper.readMessages", map);
 	}
 
-	// 특정 사용자와 대화내역 가져오기
-	public List<MessageDTO> getChats(Map<String, Object> map) throws Exception {
-		return sqlSession.selectList("com.config.MessageMapper.getChats", map);
+	public List<MessageDTO> getMessageHistory(Map<String, Object> map) throws Exception {
+		return sqlSession.selectList("com.config.MessageMapper.getMessageHistory", map);
 	}
 
-	// 쪽지 확인
-	public int readMessage(Map<String, Object> map) {
-		return sqlSession.update("com.config.MessageMapper.readMessage", map);
+	public List<MessageDTO> getUnreads(int userId) throws Exception {
+		return sqlSession.selectList("com.config.MessageMapper.getUnreads", userId);
 	}
 
-	// 확인하지 않은 쪽지 수
-	public int countUnread(int userId) throws Exception {
-		return sqlSession.selectOne("com.config.MessageMapper.countUnread", userId);
+	public int sendMessage(Map<String, Object> map) throws Exception {
+		return sqlSession.insert("com.config.MessageMapper.sendMessage", map);
 	}
 
 }

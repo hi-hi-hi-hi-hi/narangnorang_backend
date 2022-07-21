@@ -17,27 +17,30 @@ public class MessageServiceImpl implements MessageService {
 	MessageDAO messageDAO;
 
 	@Override
-	public List<MessageDTO> selectMessageList(int userId) throws Exception {
-		return messageDAO.selectMessageList(userId);
+	public List<MessageDTO> getMessageList(int userId) throws Exception {
+		return messageDAO.getMessageList(userId);
 	}
 
-	@Override
-	public int sendMessage(Map<String, Object> messageInfo) throws Exception {
-		return messageDAO.sendMessage(messageInfo);
-	}
-	
 	@Transactional
 	@Override
-	public List<MessageDTO> getChats(Map<String, Object> map) throws Exception {
-		messageDAO.readMessage(map);
-		return messageDAO.getChats(map);
+	public List<MessageDTO> getMessageHistory(Map<String, Object> map) throws Exception {
+		messageDAO.readMessages(map);
+		return messageDAO.getMessageHistory(map);
 	}
 
 	@Override
-	public int countUnread(int userId) throws Exception {
-		return messageDAO.countUnread(userId);
+	public List<MessageDTO> getUnreads(int userId) throws Exception {
+		return messageDAO.getUnreads(userId);
 	}
 
+	@Override
+	public int sendMessage(Map<String, Object> map) throws Exception {
+		return messageDAO.sendMessage(map);
+	}
 
+	@Override
+	public int readMessages(Map<String, Object> map) throws Exception {
+		return messageDAO.readMessages(map);
+	}
 
 }
