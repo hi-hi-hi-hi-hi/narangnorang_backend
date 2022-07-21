@@ -117,7 +117,7 @@ public class MemberServiceImpl implements MemberService {
 	public String getKakaoAccessToken(String authorize_code) {
 		String access_Token = "";
 		String refresh_Token = "";
-		String reqURL = "http://kauth.kakao.com/oauth/token";
+		String reqURL = "https://kauth.kakao.com/oauth/token";
 		
 		try {
 			URL url = new URL(reqURL);
@@ -130,7 +130,7 @@ public class MemberServiceImpl implements MemberService {
 			StringBuilder sb = new StringBuilder();
 			sb.append("grant_type=authorization_code");
 			sb.append("&client_id=94007325c197e3be03e0c5690a45abdb");
-			sb.append("&redirect_uri=http://localhost:8091/generalSignUp");
+			sb.append("&redirect_uri=http://localhost:8091/kakaologin");
 			sb.append("&code=" + authorize_code);
 			bw.write(sb.toString());
 			bw.flush();
@@ -168,7 +168,7 @@ public class MemberServiceImpl implements MemberService {
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("POST");
 			
-			conn.setRequestProperty("Authorization", "Bearer " + access_Token);
+			conn.setRequestProperty("Authorization", "Bearer " + access_Token); 
 			
 			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			
@@ -184,14 +184,16 @@ public class MemberServiceImpl implements MemberService {
 			
 			JsonObject kakao_account = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
 			
-			String email = null;
+			String id = element.getAsJsonObject().get("id").getAsString();
 			
+			String email = null;
 			if (kakao_account.getAsJsonObject().get("email") != null) {
 				email = kakao_account.getAsJsonObject().get("email").getAsString();
 			}
 			
 			String nickname = element.getAsJsonObject().get("properties").getAsJsonObject().get("nickname").getAsString();
 			
+			userInfo.put("id", id);
 			userInfo.put("email", email);
 			userInfo.put("name", nickname);
 		} catch (IOException e) {
@@ -199,6 +201,11 @@ public class MemberServiceImpl implements MemberService {
 		}
 		
 		return userInfo;
+	}
+
+	@Override
+	public MemberDTO selectByKakaoId(String kakaoId) throws Exception {
+		return memberDAO.selectByKakaoId(kakaoId);
 	}
 
 }

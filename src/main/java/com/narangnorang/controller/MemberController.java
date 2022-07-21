@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -244,10 +245,22 @@ public class MemberController {
 		}
 	}
 	
-	@GetMapping("/kakaologin")
-	public HashMap<String, String> kakaologin(@RequestParam String authorize_code) {
+	@GetMapping("/api/kakaologin")
+	public HashMap<String, String> kakaologin(@RequestParam String authorize_code) throws Exception {
 		String access_token = memberService.getKakaoAccessToken(authorize_code);
 		HashMap<String, String> userinfo = memberService.getKakaoUserInfo(access_token);
+		
+//		MemberDTO memberDTO = (MemberDTO)memberService.selectByKakaoId(userinfo.get("id"));
+		
+//		// 카카오 회원가입 되어있지 않을 시
+//		if (memberDTO == null) {
+//			
+//		}
+//		// 카카오 회원가입 되어있을 시 (바로 로그인) 
+//		else {
+//			
+//		}
+		
 		return userinfo;
 	}
 
