@@ -11,7 +11,7 @@ public interface MessageService {
 
 	public List<MessageDTO> getMessageHistory(Map<String, Object> map) throws Exception;
 
-	public List<MessageDTO> getUnreads(int userId) throws Exception;
+	public List<Integer> getUnreads(int userId) throws Exception;
 
 	public int sendMessage(Map<String, Object> map) throws Exception;
 

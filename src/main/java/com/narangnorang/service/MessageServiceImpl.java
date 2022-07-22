@@ -29,7 +29,7 @@ public class MessageServiceImpl implements MessageService {
 	}
 
 	@Override
-	public List<MessageDTO> getUnreads(int userId) throws Exception {
+	public List<Integer> getUnreads(int userId) throws Exception {
 		return messageDAO.getUnreads(userId);
 	}
 

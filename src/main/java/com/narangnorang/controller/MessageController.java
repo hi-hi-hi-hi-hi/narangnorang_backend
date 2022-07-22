@@ -73,7 +73,7 @@ public class MessageController {
 	public Map<String, Object> getUnreads(@AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
 		MemberDTO memberDTO = principalDetails.getMemberDTO();
 		int userId = memberDTO.getId();
-		List<MessageDTO> unreads = messageService.getUnreads(userId);
+		List<Integer> unreads = messageService.getUnreads(userId);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("unreads", unreads);

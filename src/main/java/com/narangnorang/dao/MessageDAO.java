@@ -27,7 +27,7 @@ public class MessageDAO {
 		return sqlSession.selectList("com.config.MessageMapper.getMessageHistory", map);
 	}
 
-	public List<MessageDTO> getUnreads(int userId) throws Exception {
+	public List<Integer> getUnreads(int userId) throws Exception {
 		return sqlSession.selectList("com.config.MessageMapper.getUnreads", userId);
 	}
 

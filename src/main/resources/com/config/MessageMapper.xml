@@ -4,12 +4,11 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.config.MessageMapper">
 
-	<select id="getMessageList" resultType="MessageDTO"
-		parameterType="Integer">
+	<select id="getMessageList" parameterType="_int" resultType="MessageDTO">
 	<![CDATA[
 		SELECT *
 		FROM message
-		WHERE (sender_id = ${userId} OR reciever_id = ${userId}) AND datetime in (select max(datetime) from message group by sender_id, reciever_id)
+		WHERE (sender_id = #{userId} OR reciever_id = #{userId}) AND datetime in (select max(datetime) from message group by sender_id, reciever_id)
 		ORDER BY datetime desc
 	]]>
 	</select>
@@ -18,24 +17,22 @@
 	<![CDATA[
 		UPDATE message
 		SET read = 1
-		WHERE sender_id = ${otherId} AND reciever_id = ${userId}
+		WHERE sender_id = #{otherId} AND reciever_id = #{userId}
 	]]>
 	</update>
 
-	<select id="getMessageHistory" resultType="MessageDTO"
-		parameterType="hashmap">
+	<select id="getMessageHistory" parameterType="hashmap" resultType="MessageDTO">
 	<![CDATA[
 		SELECT *
 		FROM message
-		WHERE (sender_id = ${userId} OR reciever_id = ${userId}) AND (sender_id = ${otherId} OR reciever_id = ${otherId})
+		WHERE (sender_id = #{userId} OR reciever_id = #{userId}) AND (sender_id = #{otherId} OR reciever_id = #{otherId})
 		ORDER BY datetime
 	]]>
 	</select>
 
-	<select id="getUnreads" resultType="MessageDTO"
-		parameterType="int">
+	<select id="getUnreads" parameterType="_int" resultType="_int">
 	<![CDATA[
-		SELECT *
+		SELECT sender_id
 		FROM message
 		WHERE read = 0 AND reciever_id = ${userId}
 	]]>
