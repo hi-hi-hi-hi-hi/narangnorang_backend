@@ -8,8 +8,8 @@
 	<![CDATA[
 		SELECT *
 		FROM message
-		WHERE (sender_id = #{userId} OR reciever_id = #{userId}) AND datetime in (select max(datetime) from message group by sender_id, reciever_id)
-		ORDER BY datetime desc
+		WHERE (sender_id = #{userId} OR reciever_id = #{userId}) AND datetime IN (SELECT MAX(datetime) FROM message GROUP BY sender_id, reciever_id)
+		ORDER BY datetime DESC
 	]]>
 	</select>
 
@@ -34,14 +34,14 @@
 	<![CDATA[
 		SELECT sender_id
 		FROM message
-		WHERE read = 0 AND reciever_id = ${userId}
+		WHERE read = 0 AND reciever_id = #{userId}
 	]]>
 	</select>
 
 	<insert id="sendMessage" parameterType="hashmap">
 	<![CDATA[
-		INSERT INTO message ( id, sender_id, sender_name, sender_privilege, reciever_id, reciever_name, reciever_privilege, content)
-		values (seq_message.nextval, #{senderId}, #{senderName}, #{senderPrivilege}, #{recieverId}, #{recieverName}, #{recieverPrivilege}, #{content})
+		INSERT INTO message (id, sender_id, sender_name, sender_privilege, reciever_id, reciever_name, reciever_privilege, content)
+		VALUES (seq_message.NEXTVAL, #{senderId}, #{senderName}, #{senderPrivilege}, #{recieverId}, #{recieverName}, #{recieverPrivilege}, #{content})
 	]]>
 	</insert>
 
