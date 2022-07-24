@@ -14,6 +14,6 @@ public class ReplyLikerDTO {
 
 	private int id;
 	private int memberId;
-	private int ReplyId;
+	private int replyId;
 
 }

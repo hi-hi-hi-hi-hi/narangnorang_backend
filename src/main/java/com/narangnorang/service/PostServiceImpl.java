@@ -13,6 +13,7 @@ import com.narangnorang.dto.PageDTO;
 import com.narangnorang.dto.PostDTO;
 import com.narangnorang.dto.PostLikerDTO;
 import com.narangnorang.dto.ReplyDTO;
+import com.narangnorang.dto.ReplyLikerDTO;
 
 @Service("postService")
 public class PostServiceImpl implements PostService {
@@ -109,6 +110,23 @@ public class PostServiceImpl implements PostService {
 	public int deletePostLiker(PostLikerDTO dto) throws Exception {
 		dao.minusPostLike(dto.getPostId());
 		return dao.deletePostLiker(dto.getId());
+	}
+	
+	@Override
+	public List<ReplyLikerDTO> selectReplyLiker(ReplyLikerDTO dto) throws Exception {
+		return dao.selectReplyLiker(dto);
+	}
+
+	@Override
+	public int insertReplyLiker(HashMap<String, Object> map) throws Exception {
+		dao.updateReplyLike(map);
+		return dao.insertReplyLiker((ReplyLikerDTO)map.get("replyLikerDto"));
+	}
+
+	@Override
+	public int deleteReplyLiker(HashMap<String, Object> map) throws Exception {
+		dao.updateReplyLike(map);
+		return dao.deleteReplyLiker((ReplyLikerDTO)map.get("replyLikerDto"));
 	}
 
 	@Override

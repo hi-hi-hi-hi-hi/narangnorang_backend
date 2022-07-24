@@ -7,15 +7,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.narangnorang.config.auth.PrincipalDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,13 +26,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.narangnorang.config.auth.PrincipalDetails;
 import com.narangnorang.dto.MemberDTO;
 import com.narangnorang.service.MemberService;
 
@@ -246,22 +247,35 @@ public class MemberController {
 	}
 	
 	@GetMapping("/api/kakaologin")
-	public HashMap<String, String> kakaologin(@RequestParam String authorize_code) throws Exception {
-		String access_token = memberService.getKakaoAccessToken(authorize_code);
+	public HashMap<String, String> kakaologin(HttpServletResponse response, String code) throws Exception {
+		String access_token = memberService.getKakaoAccessToken(code);
 		HashMap<String, String> userinfo = memberService.getKakaoUserInfo(access_token);
+		MemberDTO memberDTO = (MemberDTO)memberService.selectByKakaoId(userinfo.get("id"));
 		
-//		MemberDTO memberDTO = (MemberDTO)memberService.selectByKakaoId(userinfo.get("id"));
-		
-//		// 카카오 회원가입 되어있지 않을 시
-//		if (memberDTO == null) {
-//			
-//		}
-//		// 카카오 회원가입 되어있을 시 (바로 로그인) 
-//		else {
-//			
-//		}
-		
-		return userinfo;
+		// 카카오 회원가입 되어있지 않을 시
+		if (memberDTO == null) {
+			// jsp에 모델 보내서 EL로 그 데이터를 사용할수있었는데
+			// 뷰를 쓰니까 모델을 보낼 수가 없었어요
+			
+			// 카카오 추가정보 입력하는 회원가입 페이지로 리다이렉트
+			// userinfo + 부가정보 받아서 -> 회원가입 시키기
+			return userinfo;
+		}
+		// 카카오 회원가입 되어있을 시 (바로 로그인) 
+		else {
+			// 로그인하고 홈으로 리다이렉트
+			return null;
+		}		
+//		return code;
+	}
+	
+	// 카카오 회원가입 처리
+	@PostMapping("/api/kakaoSignUp")
+	public int insertKakaoUser(MemberDTO memberDTO) throws Exception {
+		String tmpPwd = memberDTO.getKakaoId();
+		String encPassWord = bCryptPasswordEncoder.encode(tmpPwd);
+		memberDTO.setPassword(encPassWord);
+		return memberService.generalSignUp(memberDTO);
 	}
 
 	// 에러 처리

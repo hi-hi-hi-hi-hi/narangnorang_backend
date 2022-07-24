@@ -21,10 +21,14 @@ public class MemberDTO {
 	private String phone;
 	private String datetime;
 	private String role;
+	
+	// Oauth Provider id
+	private String kakaoId;
 
 	// 일반
 	private String region;
 	private Integer point;
+	
 
 	// 상담사
 	private String zipcode;

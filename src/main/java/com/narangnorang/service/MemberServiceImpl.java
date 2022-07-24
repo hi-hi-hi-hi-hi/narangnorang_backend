@@ -130,7 +130,7 @@ public class MemberServiceImpl implements MemberService {
 			StringBuilder sb = new StringBuilder();
 			sb.append("grant_type=authorization_code");
 			sb.append("&client_id=94007325c197e3be03e0c5690a45abdb");
-			sb.append("&redirect_uri=http://localhost:8091/kakaologin");
+			sb.append("&redirect_uri=http://localhost:8091/kakaoLogin");
 			sb.append("&code=" + authorize_code);
 			bw.write(sb.toString());
 			bw.flush();

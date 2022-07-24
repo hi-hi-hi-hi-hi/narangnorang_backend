@@ -51,5 +51,4 @@ public interface MemberService {
 	public String getKakaoAccessToken(String authorize_code);
 	public HashMap<String, String> getKakaoUserInfo(String access_Token);
 	public MemberDTO selectByKakaoId(String kakaoId) throws Exception;
-
 }
