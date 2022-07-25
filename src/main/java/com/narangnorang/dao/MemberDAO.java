@@ -84,5 +84,10 @@ public class MemberDAO {
 	public int updateDatetime(Map<String, String> map) throws Exception {
 		return sqlSession.update("com.config.MemberMapper.updateDatetime", map);
 	}
+	
+	// 카카오 아이디로 조회
+	public MemberDTO selectByKakaoId(String kakaoId) throws Exception {
+		return sqlSession.selectOne("com.config.MemberMapper.selectByKakaoId", kakaoId);
+	}
 
 }

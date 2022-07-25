@@ -5,9 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,13 +17,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.narangnorang.config.auth.PrincipalDetails;
 import com.narangnorang.dto.MemberDTO;
-import com.narangnorang.dto.MyRoomDTO;
 import com.narangnorang.dto.NotificationDTO;
 import com.narangnorang.dto.PageDTO;
 import com.narangnorang.dto.PostDTO;
 import com.narangnorang.dto.PostLikerDTO;
 import com.narangnorang.dto.ReplyDTO;
+import com.narangnorang.dto.ReplyLikerDTO;
 import com.narangnorang.service.MiniroomService;
 import com.narangnorang.service.PostService;
 
@@ -102,8 +102,8 @@ public class PostController {
 
 	// 글 등록
 	@PostMapping("/api/post/write")
-	public int postWritePro(@RequestBody PostDTO pDto, HttpSession session) throws Exception{
-		MemberDTO mDto = (MemberDTO)session.getAttribute("login");
+	public int postWritePro(@RequestBody PostDTO pDto, @AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception{
+		MemberDTO mDto = principalDetails.getMemberDTO();
 
 		pDto.setMemberId(mDto.getId());
 		pDto.setMemberName(mDto.getName());
@@ -126,10 +126,10 @@ public class PostController {
 	
 	// 댓글 등록
 	@PostMapping("/api/post/reply")
-	public int insertReply(HttpSession session, @RequestBody ReplyDTO replyDto) throws Exception{
+	public int insertReply(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestBody ReplyDTO replyDto) throws Exception{
 		HashMap<String, Object> map = new HashMap<>();
 		
-		MemberDTO mDto = (MemberDTO)session.getAttribute("login");
+		MemberDTO mDto = principalDetails.getMemberDTO();
 		replyDto.setMemberId(mDto.getId());
 		replyDto.setMemberName(mDto.getName());
 		PostDTO pDto = postService.selectById(replyDto.getPostId());
@@ -156,15 +156,15 @@ public class PostController {
 	}
 	
 	// 댓글 수정
-	@PutMapping("/post/reply")
-	public int updateReplyContent(ReplyDTO replyDto) throws Exception{
+	@PutMapping("/api/post/reply")
+	public int updateReplyContent(@RequestBody ReplyDTO replyDto) throws Exception{
 		return postService.updateReplyContent(replyDto);
 	}
 	
 	// 게시글 추천
 	@PostMapping("/api/post/like/{id}")
-	public int insertLiker(HttpSession session, @PathVariable int id)throws Exception{	
-		MemberDTO mDto = (MemberDTO)session.getAttribute("login");
+	public int insertLiker(@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable int id)throws Exception{	
+		MemberDTO mDto = principalDetails.getMemberDTO();
 		PostLikerDTO postLikerDto = new PostLikerDTO();
 		postLikerDto.setPostId(id);
 		postLikerDto.setMemberId(mDto.getId());
@@ -180,7 +180,34 @@ public class PostController {
 			postService.insertPostLiker(postLikerDto);
 			result = 1;
 		}
+		return result;
+	}
+	
+	// 댓글 추천
+	@PostMapping("/api/post/reply/like/{id}")
+	public int insertReplyLiker(@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable int id) throws Exception {
+		MemberDTO mDto = principalDetails.getMemberDTO();
+		ReplyLikerDTO replyLikerDto = new ReplyLikerDTO();
+		replyLikerDto.setReplyId(id);
+		replyLikerDto.setMemberId(mDto.getId());
 		
+		int result = 0;
+		
+		List<ReplyLikerDTO> list = postService.selectReplyLiker(replyLikerDto);
+		
+		HashMap<String, Object> map = new HashMap<>();
+		map.put("replyLikerDto", replyLikerDto);
+		
+		if(list.size() >= 1) {
+			replyLikerDto.setId(list.get(0).getId());
+			map.put("amount", -1);
+			postService.deleteReplyLiker(map);
+			result = -1;
+		}else {
+			map.put("amount", 1);
+			postService.insertReplyLiker(map);
+			result = 1;
+		}
 		return result;
 	}
 	

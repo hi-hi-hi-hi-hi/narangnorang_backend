@@ -1,6 +1,5 @@
 package com.narangnorang.service;
 
-import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,7 @@ import com.narangnorang.dto.MemberDTO;
 
 @Service("counselService")
 public class CounselServiceImpl implements CounselService {
-	
+
 	@Autowired
 	CounselDAO counselDAO;
 
@@ -19,7 +18,5 @@ public class CounselServiceImpl implements CounselService {
 	public List<MemberDTO> selectCounselorList() throws Exception {
 		return counselDAO.selectCounselorList();
 	}
-
-
 
 }

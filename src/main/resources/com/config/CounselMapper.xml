@@ -9,11 +9,8 @@
 	<![CDATA[
 		SELECT *
 		FROM member
-		WHERE privilege=1
+		WHERE privilege = 1
 	]]>
 	</select>
-
-
-
 
 </mapper>

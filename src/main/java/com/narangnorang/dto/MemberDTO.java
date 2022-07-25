@@ -13,17 +13,22 @@ import lombok.NoArgsConstructor;
 public class MemberDTO {
 	
 	// 공통
-	private int id;
+	private Integer id;
 	private String email;
 	private String password;
 	private int privilege;
 	private String name;
 	private String phone;
 	private String datetime;
+	private String role;
+	
+	// Oauth Provider id
+	private String kakaoId;
 
 	// 일반
 	private String region;
 	private Integer point;
+	
 
 	// 상담사
 	private String zipcode;

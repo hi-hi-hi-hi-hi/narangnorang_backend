@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.google.common.reflect.TypeToken;
@@ -20,12 +21,26 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.narangnorang.config.auth.PrincipalDetails;
 import com.nimbusds.jose.shaded.json.JSONObject;
+import com.narangnorang.config.auth.PrincipalDetails;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.narangnorang.config.auth.PrincipalDetails;
 import com.narangnorang.dto.MemberDTO;
 import com.narangnorang.service.MemberService;
 
@@ -36,13 +51,16 @@ public class MemberController {
 	MemberService memberService;
 	@Autowired
 	JavaMailSender javaMailSender;
+	@Autowired
+	BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	// 로그인
 	@PostMapping("/api/login")
-	public MemberDTO login(HttpSession session, @RequestParam Map<String, String> map) throws Exception {
-		MemberDTO memberDTO = memberService.selectMember(map);
-		session.setAttribute("login", memberDTO);
-		return memberDTO;
+	public MemberDTO login(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestParam Map<String, String> map) throws Exception {
+//		MemberDTO memberDTO = memberService.selectMember(map);
+//		session.setAttribute("login", memberDTO);
+//		return memberDTO;
+		return principalDetails.getMemberDTO();
 	}
 
 	// 로그아웃
@@ -61,12 +79,18 @@ public class MemberController {
 	// 일반회원가입 처리
 	@PostMapping("/api/generalSignUp")
 	public int insertGeneral(MemberDTO memberDTO) throws Exception {
+		String rawPassWord = memberDTO.getPassword();
+		String encPassWord = bCryptPasswordEncoder.encode(rawPassWord);
+		memberDTO.setPassword(encPassWord);
 		return memberService.generalSignUp(memberDTO);
 	}
 
 	// 상담사 회원가입 처리
 	@PostMapping("/api/counselorSignUp")
 	public int insertCounselor(MemberDTO memberDTO) throws Exception {
+		String rawPassWord = memberDTO.getPassword();
+		String encPassWord = bCryptPasswordEncoder.encode(rawPassWord);
+		memberDTO.setPassword(encPassWord);
 		return memberService.counselorSignUp(memberDTO);
 	}
 
@@ -95,16 +119,22 @@ public class MemberController {
 	@PutMapping("/api/newPw")
 	public int newPw(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
 		MemberDTO mDTO = (MemberDTO) session.getAttribute("findPw");
-		mDTO.setPassword(memberDTO.getPassword());
-		System.out.println(mDTO);
+		String rawPassWord = memberDTO.getPassword();
+		String encPassWord = bCryptPasswordEncoder.encode(rawPassWord);
+		mDTO.setPassword(encPassWord);
 		return memberService.newPw(mDTO);
 	}
 
 	@PutMapping("/api/myPage/newPw")
-	public int myPageNewPw(HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
-		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
-		mDTO.setPassword(memberDTO.getPassword());
-		session.setAttribute("login", mDTO);
+	public int myPageNewPw(Authentication authentication, HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
+		String email = authentication.getName();
+		MemberDTO mDTO = memberService.selectByEmail(email);
+//		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
+		String rawPassWord = memberDTO.getPassword();
+		String encPassWord = bCryptPasswordEncoder.encode(rawPassWord);
+		mDTO.setPassword(encPassWord);
+//		mDTO.setPassword(memberDTO.getPassword());
+//		session.setAttribute("login", mDTO);
 		return memberService.newPw(mDTO);
 	}
 
@@ -224,6 +254,47 @@ public class MemberController {
 		} else {
 			return false;
 		}
+	}
+	
+	@GetMapping("/api/kakaologin")
+	public HashMap<String, String> kakaologin(String code) throws Exception {
+		String access_token = memberService.getKakaoAccessToken(code);
+		HashMap<String, String> userinfo = memberService.getKakaoUserInfo(access_token);
+		MemberDTO memberDTO = (MemberDTO)memberService.selectByKakaoId(userinfo.get("id"));
+		
+		// 카카오 회원가입 되어있지 않을 시
+		if (memberDTO == null) {
+			return userinfo;
+		}
+		// 카카오 회원가입 되어있을 시 (바로 로그인) 
+		else {
+			return null;
+		}		
+	}
+	
+	// 카카오 회원가입 처리
+	@PostMapping("/api/kakaoSignUp")
+	public int insertKakaoUser(MemberDTO memberDTO) throws Exception {
+		int randomNumber = 0;
+		String tmpId = "";
+		Boolean idDuplication = true;
+		while (idDuplication) {
+			randomNumber = (int)Math.floor(Math.random() * (99999999 - 10000000 + 1)) + 99999999;
+			tmpId = "kakao" + randomNumber + "@k.com";
+			if (memberService.checkId(tmpId) == 0) {
+				memberDTO.setEmail(tmpId);
+				idDuplication = false;
+			}
+		}
+		String tmpPwd = memberDTO.getKakaoId();
+		String encPassWord = bCryptPasswordEncoder.encode(tmpPwd);
+		memberDTO.setPassword(encPassWord);
+		return memberService.generalSignUp(memberDTO);
+	}
+
+	@PostMapping("/api/googleLogin")
+	public String googleLogin() throws Exception {
+		return "sibal";
 	}
 
 	@GetMapping("/api/naverLogin")
