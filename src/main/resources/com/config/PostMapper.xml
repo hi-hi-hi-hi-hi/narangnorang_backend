@@ -204,6 +204,7 @@
 		]]>
 	</delete>
 	
+	<!-- 댓글 알림 추가 -->
 	<insert id="insertNoti" parameterType="PostDTO">
 		<![CDATA[
 			insert into notification ( id, post_id, member_id )
@@ -211,6 +212,7 @@
 		]]>
 	</insert>
 	
+	<!-- 댓글 알림 표시 -->
 	<select id="selectNoti" parameterType="int" resultType="NotificationDTO">
 		<![CDATA[
 			select n.id, n.post_id, p.title as postTitle, p.category as postCategory
@@ -222,11 +224,45 @@
 		]]>
 	</select>
 	
+	<!-- 댓글 알림 지우기 -->
 	<delete id="deleteNoti" parameterType="int">
 		<![CDATA[
 			delete from notification
 			where id = #{id}
 		]]>
 	</delete>
+	
+	<select id="selectReplyLiker" parameterType="ReplyLikerDTO" resultType="ReplyLikerDTO">
+		<![CDATA[
+			select *
+			from reply_liker
+			where reply_id=#{replyId} AND member_id=#{memberId}
+		]]>
+	</select>
+	
+	<!-- 댓글 추천 취소 -->
+	<delete id="deleteReplyLiker" parameterType="int">
+		<![CDATA[
+			delete from reply_liker
+			where id = #{id}
+		]]>
+	</delete>
+	
+	<!-- 댓글 추천 -->
+	<insert id="insertReplyLiker" parameterType="ReplyLikerDTO">
+		<![CDATA[
+			insert into reply_liker ( id, member_id, reply_id )
+			values ( seq_reply_liker.nextval, #{memberId}, #{replyId} )
+		]]>
+	</insert>
+	
+	<!-- 댓글 추천수 증가, 감소 -->
+	<update id="updateReplyLike" parameterType="hashmap">
+		<![CDATA[
+			update reply
+			set likes = likes + #{amount}
+			where id = #{replyLikerDto.replyId}
+		]]>
+	</update>
 
 </mapper>
