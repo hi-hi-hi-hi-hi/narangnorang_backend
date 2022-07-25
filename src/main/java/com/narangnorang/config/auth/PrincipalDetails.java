@@ -1,6 +1,7 @@
 package com.narangnorang.config.auth;
 
 import com.narangnorang.dto.MemberDTO;
+
 import lombok.Data;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -69,7 +70,6 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     public boolean isEnabled() {
         return true;
     }
-
     @Override
     public Map<String, Object> getAttributes() {
         return attributes;

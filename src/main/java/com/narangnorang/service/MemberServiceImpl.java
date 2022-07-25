@@ -1,16 +1,16 @@
 package com.narangnorang.service;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.narangnorang.dao.MiniroomDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,7 +118,7 @@ public class MemberServiceImpl implements MemberService {
 		String access_Token = "";
 		String refresh_Token = "";
 		String reqURL = "https://kauth.kakao.com/oauth/token";
-		
+
 		try {
 			URL url = new URL(reqURL);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -130,6 +130,7 @@ public class MemberServiceImpl implements MemberService {
 			StringBuilder sb = new StringBuilder();
 			sb.append("grant_type=authorization_code");
 			sb.append("&client_id=94007325c197e3be03e0c5690a45abdb");
+
 			sb.append("&redirect_uri=http://localhost:8091/kakaoLogin");
 			sb.append("&code=" + authorize_code);
 			bw.write(sb.toString());
@@ -154,7 +155,6 @@ public class MemberServiceImpl implements MemberService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 		return access_Token;
 	}
 
@@ -162,7 +162,7 @@ public class MemberServiceImpl implements MemberService {
 	public HashMap<String, String> getKakaoUserInfo(String access_Token) {
 		HashMap<String, String> userInfo = new HashMap<>();
 		String reqURL = "https://kapi.kakao.com/v2/user/me";
-		
+
 		try {
 			URL url = new URL(reqURL);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -192,8 +192,38 @@ public class MemberServiceImpl implements MemberService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 		return userInfo;
+	}
+	@Override
+	public String getNaverUserInfo(String access_Token) {
+		String token = access_Token;// 네아로 접근 토큰 값";
+		StringBuffer response = null;
+		System.out.println(token);
+		String header = "Bearer " + token; // Bearer 다음에 공백 추가
+		try {
+			String apiURL = "https://openapi.naver.com/v1/nid/me";
+			URL url = new URL(apiURL);
+			HttpURLConnection con = (HttpURLConnection)url.openConnection();
+			con.setRequestMethod("GET");
+			con.setRequestProperty("Authorization", header);
+			int responseCode = con.getResponseCode();
+			BufferedReader br;
+			if(responseCode==200) { // 정상 호출
+				br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			} else {  // 에러 발생
+				br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
+			}
+			String inputLine;
+			response = new StringBuffer();
+			while ((inputLine = br.readLine()) != null) {
+				response.append(inputLine);
+			}
+			br.close();
+			System.out.println("확인:" + response.toString());
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return response.toString();
 	}
 
 	@Override

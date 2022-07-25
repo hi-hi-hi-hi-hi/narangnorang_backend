@@ -1,12 +1,26 @@
 package com.narangnorang.controller;
 
 import java.io.File;
-import java.util.*;
+
+
+import java.lang.reflect.Member;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+import com.narangnorang.config.auth.PrincipalDetails;
+import com.nimbusds.jose.shaded.json.JSONObject;
 import com.narangnorang.config.auth.PrincipalDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -283,6 +297,40 @@ public class MemberController {
 		return "sibal";
 	}
 
+	@GetMapping("/api/naverLogin")
+	public HashMap<String,Object> naverLogin(@RequestParam String access_token) throws Exception {
+		System.out.println(access_token);
+		String map = memberService.getNaverUserInfo(access_token);
+		HashMap<String, Object> retMap = new Gson().fromJson(
+				map, new TypeToken<HashMap<String, Object>>() {}.getType()
+		);
+		String NaverInfo = (String) retMap.get("response");
+		System.out.println(retMap.get("response"));
+		HashMap<String, Object> response = new Gson().fromJson(
+				NaverInfo, new TypeToken<HashMap<String, Object>>() {}.getType()
+		);
+		String email = (String) response.get("email");
+		String name = (String) response.get("name");
+
+		System.out.println(email);
+		HashMap<String,Object> mDTO = new HashMap<String,Object>();
+		mDTO.put("email",email);
+		mDTO.put("name",name);
+
+		System.out.println(mDTO);
+
+//		MemberDTO memberDTO = (MemberDTO)memberService.selectByKakaoId(userinfo.get("id"));
+
+//		// 카카오 회원가입 되어있지 않을 시
+//		if (memberDTO == null) {
+//
+//		}
+//		// 카카오 회원가입 되어있을 시 (바로 로그인)
+//		else {
+//
+//		}
+		return mDTO;
+	}
 	// 에러 처리
 	@ExceptionHandler({ Exception.class })
 	public String error() throws Exception {

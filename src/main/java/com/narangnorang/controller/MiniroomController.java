@@ -87,7 +87,7 @@ public class MiniroomController {
 		int price = (int)map2.get("price");
 		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
 		int memberId = mDTO.getId();
-		// Check에 쓰임. click한 아이템 price찾기에 쓰임.
+		// Check에 쓰임.
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("itemId", id);
 		map.put("memberId", memberId);

@@ -46,9 +46,9 @@ public interface MemberService {
 
 	// 선택 상담사 승급
 	public int privileageUp(List<String> list) throws Exception;
-	
 	// 카카오 로그인
 	public String getKakaoAccessToken(String authorize_code);
 	public HashMap<String, String> getKakaoUserInfo(String access_Token);
+	public String getNaverUserInfo(String access_Token);
 	public MemberDTO selectByKakaoId(String kakaoId) throws Exception;
 }
