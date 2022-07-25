@@ -247,31 +247,35 @@ public class MemberController {
 	}
 	
 	@GetMapping("/api/kakaologin")
-	public HashMap<String, String> kakaologin(HttpServletResponse response, String code) throws Exception {
+	public HashMap<String, String> kakaologin(String code) throws Exception {
 		String access_token = memberService.getKakaoAccessToken(code);
 		HashMap<String, String> userinfo = memberService.getKakaoUserInfo(access_token);
 		MemberDTO memberDTO = (MemberDTO)memberService.selectByKakaoId(userinfo.get("id"));
 		
 		// 카카오 회원가입 되어있지 않을 시
 		if (memberDTO == null) {
-			// jsp에 모델 보내서 EL로 그 데이터를 사용할수있었는데
-			// 뷰를 쓰니까 모델을 보낼 수가 없었어요
-			
-			// 카카오 추가정보 입력하는 회원가입 페이지로 리다이렉트
-			// userinfo + 부가정보 받아서 -> 회원가입 시키기
 			return userinfo;
 		}
 		// 카카오 회원가입 되어있을 시 (바로 로그인) 
 		else {
-			// 로그인하고 홈으로 리다이렉트
 			return null;
 		}		
-//		return code;
 	}
 	
 	// 카카오 회원가입 처리
 	@PostMapping("/api/kakaoSignUp")
 	public int insertKakaoUser(MemberDTO memberDTO) throws Exception {
+		int randomNumber = 0;
+		String tmpId = "";
+		Boolean idDuplication = true;
+		while (idDuplication) {
+			randomNumber = (int)Math.floor(Math.random() * (99999999 - 10000000 + 1)) + 99999999;
+			tmpId = "kakao" + randomNumber + "@k.com";
+			if (memberService.checkId(tmpId) == 0) {
+				memberDTO.setEmail(tmpId);
+				idDuplication = false;
+			}
+		}
 		String tmpPwd = memberDTO.getKakaoId();
 		String encPassWord = bCryptPasswordEncoder.encode(tmpPwd);
 		memberDTO.setPassword(encPassWord);
