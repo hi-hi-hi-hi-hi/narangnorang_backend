@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.narangnorang.config.auth.PrincipalDetails;
 import com.narangnorang.dto.ChallengeDTO;
 import com.narangnorang.dto.DailyLogDTO;
 import com.narangnorang.dto.MemberDTO;
@@ -31,8 +32,9 @@ public class ChatBotController {
 
 	// 챌린지 조회(하루)
 	@GetMapping("/api/chatbot/challenge")
-	public Map<String, Object> selectChallenge(HttpSession session) throws Exception {
-		MemberDTO login = (MemberDTO) session.getAttribute("login");
+	public Map<String, Object> selectChallenge(@AuthenticationPrincipal PrincipalDetails principalDetails)
+			throws Exception {
+		MemberDTO login = principalDetails.getMemberDTO();
 		int memberId = login.getId();
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -76,8 +78,9 @@ public class ChatBotController {
 
 	// 일일 데이터 조회(하루)
 	@GetMapping("/api/chatbot/dailylog")
-	public Map<String, Object> selectDailyLog(HttpSession session) throws Exception {
-		MemberDTO login = (MemberDTO) session.getAttribute("login");
+	public Map<String, Object> selectDailyLog(@AuthenticationPrincipal PrincipalDetails principalDetails)
+			throws Exception {
+		MemberDTO login = principalDetails.getMemberDTO();
 		int memberId = login.getId();
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -94,8 +97,9 @@ public class ChatBotController {
 
 	// 기분 상태 조회(접속일시 이후)
 	@GetMapping("/api/chatbot/moodstate")
-	public Map<String, Object> selectMoodState(HttpSession session) throws Exception {
-		MemberDTO login = (MemberDTO) session.getAttribute("login");
+	public Map<String, Object> selectMoodState(@AuthenticationPrincipal PrincipalDetails principalDetails)
+			throws Exception {
+		MemberDTO login = principalDetails.getMemberDTO();
 		int memberId = login.getId();
 		String datetime = login.getDatetime();
 		MoodStateDTO moodStateDTO = new MoodStateDTO(0, memberId, datetime, 0);
@@ -110,9 +114,10 @@ public class ChatBotController {
 
 	// 챌린지 저장
 	@PostMapping("/api/chatbot/challenge")
-	public Map<String, Object> insertChallenge(HttpSession session, HttpServletRequest request,
-			ChallengeDTO challengeDTO, @RequestParam("multipartFile") MultipartFile multipartFile) throws Exception {
-		MemberDTO login = (MemberDTO) session.getAttribute("login");
+	public Map<String, Object> insertChallenge(@AuthenticationPrincipal PrincipalDetails principalDetails,
+			HttpServletRequest request, ChallengeDTO challengeDTO,
+			@RequestParam("multipartFile") MultipartFile multipartFile) throws Exception {
+		MemberDTO login = principalDetails.getMemberDTO();
 		int memberId = login.getId();
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -139,9 +144,9 @@ public class ChatBotController {
 
 	// 일일 데이터 저장
 	@PostMapping("/api/chatbot/dailylog")
-	public Map<String, Object> insertDailyLog(HttpSession session, @RequestBody DailyLogDTO dailyLogDTO)
-			throws Exception {
-		MemberDTO login = (MemberDTO) session.getAttribute("login");
+	public Map<String, Object> insertDailyLog(@AuthenticationPrincipal PrincipalDetails principalDetails,
+			@RequestBody DailyLogDTO dailyLogDTO) throws Exception {
+		MemberDTO login = principalDetails.getMemberDTO();
 		int memberId = login.getId();
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -159,9 +164,9 @@ public class ChatBotController {
 
 	// 기분 상태 저장
 	@PostMapping("/api/chatbot/moodstate")
-	public Map<String, Object> insertMoodState(HttpSession session, @RequestBody MoodStateDTO moodStateDTO)
-			throws Exception {
-		MemberDTO login = (MemberDTO) session.getAttribute("login");
+	public Map<String, Object> insertMoodState(@AuthenticationPrincipal PrincipalDetails principalDetails,
+			@RequestBody MoodStateDTO moodStateDTO) throws Exception {
+		MemberDTO login = principalDetails.getMemberDTO();
 		int memberId = login.getId();
 		moodStateDTO.setMemberId(memberId);
 		Map<String, Object> response = new HashMap<String, Object>();

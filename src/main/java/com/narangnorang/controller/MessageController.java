@@ -1,7 +1,5 @@
 package com.narangnorang.controller;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,11 +27,11 @@ public class MessageController {
 	MemberService memberService;
 
 	@GetMapping("/api/message/list")
-	public Map<String, Object> selectMessageList(@AuthenticationPrincipal PrincipalDetails principalDetails)
+	public Map<String, Object> getMessageList(@AuthenticationPrincipal PrincipalDetails principalDetails)
 			throws Exception {
 		MemberDTO memberDTO = principalDetails.getMemberDTO();
 		int userId = memberDTO.getId();
-		List<MessageDTO> messageList = messageService.selectMessageList(userId);
+		List<MessageDTO> messageList = messageService.getMessageList(userId);
 
 		Iterator<MessageDTO> iter = messageList.iterator();
 		List<Integer> otherUsers = new ArrayList<Integer>();
@@ -52,22 +50,19 @@ public class MessageController {
 				}
 			}
 		}
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd");
-		LocalDate localDate = LocalDate.now();
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("messageList", messageList);
-		result.put("todayDate", dtf.format(localDate));
 		return result;
 	}
 
 	@GetMapping("/api/message/history")
-	public Map<String, Object> popupChats(@AuthenticationPrincipal PrincipalDetails principalDetails,
+	public Map<String, Object> getMessageHistory(@AuthenticationPrincipal PrincipalDetails principalDetails,
 			@RequestParam Map<String, Object> map) throws Exception {
 		MemberDTO memberDTO = principalDetails.getMemberDTO();
 		int userId = memberDTO.getId();
 		map.put("userId", userId);
-		List<MessageDTO> messageHistory = messageService.getChats(map);
+		List<MessageDTO> messageHistory = messageService.getMessageHistory(map);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("messageHistory", messageHistory);
@@ -75,14 +70,26 @@ public class MessageController {
 	}
 
 	@GetMapping("/api/message/unreads")
-	public Map<String, Object> countUnread(@AuthenticationPrincipal PrincipalDetails principalDetails)
-			throws Exception {
+	public Map<String, Object> getUnreads(@AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
 		MemberDTO memberDTO = principalDetails.getMemberDTO();
 		int userId = memberDTO.getId();
-		int unreads = messageService.countUnread(userId);
+		List<Integer> unreads = messageService.getUnreads(userId);
 
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("unreads", unreads);
+		return result;
+	}
+
+	@GetMapping("/api/message/read")
+	public Map<String, Object> readMessages(@AuthenticationPrincipal PrincipalDetails principalDetails,
+			@RequestParam Map<String, Object> map) throws Exception {
+		MemberDTO memberDTO = principalDetails.getMemberDTO();
+		int userId = memberDTO.getId();
+		map.put("userId", userId);
+		int cnt = messageService.readMessages(map);
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("cnt", cnt);
 		return result;
 	}
 

@@ -33,8 +33,8 @@
 	<!-- 일반회원가입 -->
 	<insert id="generalSignUp" parameterType="MemberDTO">
    	<![CDATA[
-		INSERT	INTO member (id, email, password, phone, privilege, name, region, datetime, point, role)
-		VALUES (seq_member.nextval,#{email},#{password},#{phone},3,#{name},#{region},sysdate,50,'ROLE_USER')
+		INSERT	INTO member (id, email, password, phone, privilege, name, region, datetime, point, role, kakao_id)
+		VALUES (seq_member.nextval,#{email},#{password},#{phone},3,#{name},#{region},sysdate,50,'ROLE_USER',#{kakaoId})
 	]]>
 	</insert>
 
@@ -133,7 +133,7 @@
 	</update>
 	
 	<!-- 카카오 아이디로 조회 -->
-	<select id="selectByKakaoId" parameterType="String">
+	<select id="selectByKakaoId" parameterType="String" resultType="MemberDTO">
 	<![CDATA[
 		SELECT * FROM member
 		WHERE kakao_id = #{kakaoId}

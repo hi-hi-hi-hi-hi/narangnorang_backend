@@ -12,6 +12,7 @@ import com.narangnorang.dto.PageDTO;
 import com.narangnorang.dto.PostDTO;
 import com.narangnorang.dto.PostLikerDTO;
 import com.narangnorang.dto.ReplyDTO;
+import com.narangnorang.dto.ReplyLikerDTO;
 
 @Repository("postDAO")
 public class PostDAO {
@@ -108,5 +109,21 @@ public class PostDAO {
 	
 	public int deleteNoti(int id) {
 		return session.delete("com.config.PostMapper.deleteNoti", id);
+	}
+	
+	public List<ReplyLikerDTO> selectReplyLiker(ReplyLikerDTO dto) {
+		return session.selectList("com.config.PostMapper.selectReplyLiker", dto);
+	}
+	
+	public int deleteReplyLiker(ReplyLikerDTO dto) {
+		return session.delete("com.config.PostMapper.deleteReplyLiker", dto);
+	}
+	
+	public int insertReplyLiker(ReplyLikerDTO dto) {
+		return session.insert("com.config.PostMapper.insertReplyLiker", dto);
+	}
+	
+	public int updateReplyLike(HashMap<String, Object> map) {
+		return session.update("com.config.PostMapper.updateReplyLike", map);
 	}
 }
