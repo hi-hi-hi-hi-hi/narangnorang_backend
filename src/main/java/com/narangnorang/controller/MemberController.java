@@ -1,16 +1,16 @@
 package com.narangnorang.controller;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.google.api.client.auth.openidconnect.IdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
 import com.narangnorang.config.auth.PrincipalDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -262,6 +262,11 @@ public class MemberController {
 //		}
 		
 		return userinfo;
+	}
+
+	@PostMapping("/api/googleLogin")
+	public String googleLogin() throws Exception {
+		return "sibal";
 	}
 
 	// 에러 처리
