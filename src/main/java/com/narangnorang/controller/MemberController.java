@@ -1,17 +1,13 @@
 package com.narangnorang.controller;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import com.narangnorang.config.auth.PrincipalDetails;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -280,6 +276,11 @@ public class MemberController {
 		String encPassWord = bCryptPasswordEncoder.encode(tmpPwd);
 		memberDTO.setPassword(encPassWord);
 		return memberService.generalSignUp(memberDTO);
+	}
+
+	@PostMapping("/api/googleLogin")
+	public String googleLogin() throws Exception {
+		return "sibal";
 	}
 
 	// 에러 처리
