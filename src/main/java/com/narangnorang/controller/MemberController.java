@@ -260,7 +260,6 @@ public class MemberController {
 			map.put("memberDTO", memberDTO);
 			map.put("result", 1);
 		}
-
 		return map;
 	}
 	

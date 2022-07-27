@@ -17,6 +17,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.narangnorang.config.auth.PrincipalDetails;
+import com.narangnorang.dto.ItemDTO;
+import com.narangnorang.dto.MemberDTO;
+import com.narangnorang.dto.MyItemDTO;
+import com.narangnorang.dto.MyRoomDTO;
+import com.narangnorang.service.MemberService;
+import com.narangnorang.service.MiniroomService;
+
 @RestController
 public class MiniroomController {
 
