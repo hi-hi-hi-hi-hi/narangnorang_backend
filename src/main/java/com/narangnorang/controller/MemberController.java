@@ -246,19 +246,25 @@ public class MemberController {
 	}
 	
 	@GetMapping("/api/kakaologin")
-	public HashMap<String, String> kakaologin(String code) throws Exception {
+	public HashMap<String, Object> kakaologin(String code) throws Exception {
 		String access_token = memberService.getKakaoAccessToken(code);
 		HashMap<String, String> userinfo = memberService.getKakaoUserInfo(access_token);
 		MemberDTO memberDTO = (MemberDTO)memberService.selectByKakaoId(userinfo.get("id"));
 		
+		HashMap<String, Object> map = new HashMap<>();
 		// 카카오 회원가입 되어있지 않을 시
 		if (memberDTO == null) {
-			return userinfo;
+			map.put("userinfo", userinfo);
+			map.put("result", 0);
 		}
 		// 카카오 회원가입 되어있을 시 (바로 로그인) 
 		else {
-			return null;
-		}		
+			memberDTO.setPassword(userinfo.get("id"));
+			map.put("memberDTO", memberDTO);
+			map.put("result", 1);
+		}
+		
+		return map;
 	}
 	
 	// 카카오 회원가입 처리
