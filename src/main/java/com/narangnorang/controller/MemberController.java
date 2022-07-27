@@ -45,10 +45,7 @@ public class MemberController {
 
 	// 로그인
 	@PostMapping("/api/login")
-	public MemberDTO login(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestParam Map<String, String> map) throws Exception {
-//		MemberDTO memberDTO = memberService.selectMember(map);
-//		session.setAttribute("login", memberDTO);
-//		return memberDTO;
+	public MemberDTO login(@AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
 		return principalDetails.getMemberDTO();
 	}
 
@@ -85,8 +82,8 @@ public class MemberController {
 
 	// 로그인 세션 불러오기
 	@GetMapping("/api/loginSession")
-	public MemberDTO loginSession(HttpSession session) throws Exception {
-		return (MemberDTO) session.getAttribute("login");
+	public MemberDTO loginSession(@AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
+		return principalDetails.getMemberDTO();
 	}
 
 	// 비번 찾기 임시 세션
@@ -244,21 +241,27 @@ public class MemberController {
 			return false;
 		}
 	}
-	
+
 	@GetMapping("/api/kakaologin")
-	public HashMap<String, String> kakaologin(String code) throws Exception {
+	public HashMap<String, Object> kakaologin(String code) throws Exception {
 		String access_token = memberService.getKakaoAccessToken(code);
 		HashMap<String, String> userinfo = memberService.getKakaoUserInfo(access_token);
 		MemberDTO memberDTO = (MemberDTO)memberService.selectByKakaoId(userinfo.get("id"));
-		
+
+		HashMap<String, Object> map = new HashMap<>();
 		// 카카오 회원가입 되어있지 않을 시
 		if (memberDTO == null) {
-			return userinfo;
+			map.put("userinfo", userinfo);
+			map.put("result", 0);
 		}
-		// 카카오 회원가입 되어있을 시 (바로 로그인) 
+		// 카카오 회원가입 되어있을 시 (바로 로그인)
 		else {
-			return null;
-		}		
+			memberDTO.setPassword(userinfo.get("id"));
+			map.put("memberDTO", memberDTO);
+			map.put("result", 1);
+		}
+
+		return map;
 	}
 	
 	// 카카오 회원가입 처리
@@ -279,11 +282,6 @@ public class MemberController {
 		String encPassWord = bCryptPasswordEncoder.encode(tmpPwd);
 		memberDTO.setPassword(encPassWord);
 		return memberService.generalSignUp(memberDTO);
-	}
-
-	@PostMapping("/api/googleLogin")
-	public String googleLogin() throws Exception {
-		return "sibal";
 	}
 
 	@GetMapping("/api/naverLogin")

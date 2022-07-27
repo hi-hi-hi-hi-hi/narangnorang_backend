@@ -6,6 +6,7 @@ import com.narangnorang.service.MemberService;
 import com.narangnorang.service.MiniroomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,10 +27,8 @@ public class MiniroomController {
 
 	// 홈 (로그인 O)
 	@GetMapping("/api/home")
-	public HashMap<String, Object> home(Authentication authentication) throws Exception {
-
-		String email = authentication.getName();
-		MemberDTO mDTO = memberService.selectByEmail(email);
+	public HashMap<String, Object> home(@AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
+		MemberDTO mDTO = principalDetails.getMemberDTO();
 		int id = mDTO.getId();
 		int privilege = mDTO.getPrivilege();
 		MemberDTO memberPointDTO = miniroomService.selectMemberPoint(id);
@@ -54,8 +53,8 @@ public class MiniroomController {
   
 	@GetMapping("/api/home/buy")
 	public HashMap<String, Object> buy(@RequestParam(value="category",required=false,defaultValue="bed") String category
-	,HttpSession session) throws Exception {
-		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
+	,@AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
+		MemberDTO mDTO = principalDetails.getMemberDTO();
 		int id = mDTO.getId();
 		HashMap<String, Object> result = new HashMap<>();
 		HashMap<String, Object> map = new HashMap<>();
@@ -69,8 +68,8 @@ public class MiniroomController {
 	}
 
 	@GetMapping("/api/home/wish")
-	public HashMap<String, Object> wish(HttpSession session) throws Exception {
-		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
+	public HashMap<String, Object> wish(@AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
+		MemberDTO mDTO = principalDetails.getMemberDTO();
 		int id = mDTO.getId();
 		HashMap<String, Object> result = new HashMap<>();
 		List<ItemDTO> list =  miniroomService.selectAllWishItems(id);
@@ -81,11 +80,11 @@ public class MiniroomController {
 	//물건 구매
 
 	@PostMapping("/api/home/buy")
-	public String buy(@RequestBody Map<String, Object> paramMap, HttpSession session) throws Exception {
+	public String buy(@RequestBody Map<String, Object> paramMap, @AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
 		Map<String, Object> map2 = (Map<String, Object>) paramMap.get("data");
 		int id = (int)map2.get("id");
 		int price = (int)map2.get("price");
-		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
+		MemberDTO mDTO = principalDetails.getMemberDTO();
 		int memberId = mDTO.getId();
 		// Check에 쓰임.
 		HashMap<String, Object> map = new HashMap<>();
@@ -129,9 +128,9 @@ public class MiniroomController {
 
 	// 위시리스트 추가
 	@PostMapping("api//home/buy/{itemId}")
-	public String wishupdate(@PathVariable("itemId") int itemId,HttpSession session) throws Exception{
+	public String wishupdate(@PathVariable("itemId") int itemId, @AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception{
 
-		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
+		MemberDTO mDTO = principalDetails.getMemberDTO();
 		int id = mDTO.getId();
 		String mesg;
 		int result=0;
@@ -158,9 +157,9 @@ public class MiniroomController {
 
 	//미니룸에 내아이템 적용
 	@PutMapping("/api/home/style")
-	public int applyMiniroom(HttpSession session,@RequestBody Map<String, Object> paramMap) throws Exception{
+	public int applyMiniroom(@AuthenticationPrincipal PrincipalDetails principalDetails ,@RequestBody Map<String, Object> paramMap) throws Exception{
 		HashMap<String,Object> map = (HashMap<String, Object>) paramMap.get("data");
-		MemberDTO mDTO = (MemberDTO)session.getAttribute("login");
+		MemberDTO mDTO = principalDetails.getMemberDTO();
 		int id = mDTO.getId();
 		map.put("memberId", id);
 		int result = miniroomService.applyMiniroom(map);
