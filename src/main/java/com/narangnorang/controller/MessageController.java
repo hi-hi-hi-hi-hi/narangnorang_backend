@@ -37,11 +37,9 @@ public class MessageController {
 		List<Integer> otherUsers = new ArrayList<Integer>();
 		while (iter.hasNext()) {
 			MessageDTO messageDTO = iter.next();
-			// 만약 이미 대화방이 표시된 사용자면 제거
 			if (otherUsers.contains(messageDTO.getSenderId()) || otherUsers.contains(messageDTO.getRecieverId())) {
 				iter.remove();
 			} else {
-				// sender/reciever가 본인이 아닌 경우 리스트 추가
 				if (userId != messageDTO.getSenderId()) {
 					otherUsers.add(messageDTO.getSenderId());
 				}
