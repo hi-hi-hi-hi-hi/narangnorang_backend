@@ -39,3 +39,5 @@ bin/
 src/main/resources/static/
 src/main/resources/datasource.properties
 src/main/resources/mail.properties
+src/main/resources/oauth.properties
+wallet_highfive/

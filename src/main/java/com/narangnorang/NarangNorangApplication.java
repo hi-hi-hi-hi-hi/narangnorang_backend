@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @SpringBootApplication
 @PropertySource(value = "classpath:datasource.properties")
 @PropertySource(value = "classpath:mail.properties")
+@PropertySource(value = "classpath:oauth.properties")
 public class NarangNorangApplication {
 
 	@Bean
