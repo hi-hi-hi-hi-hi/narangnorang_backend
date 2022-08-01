@@ -12,7 +12,7 @@ import com.narangnorang.dto.MemberDTO;
 public class CounselServiceImpl implements CounselService {
 
 	@Autowired
-	CounselDAO counselDAO;
+	private CounselDAO counselDAO;
 
 	@Override
 	public List<MemberDTO> selectCounselorList() throws Exception {

@@ -15,7 +15,7 @@ import com.narangnorang.service.CounselService;
 public class CounselController {
 
 	@Autowired
-	CounselService counselService;
+	private CounselService counselService;
 
 	@GetMapping("/api/counsel/list")
 	public Map<String, Object> selectCounselorList() throws Exception {
@@ -35,4 +35,5 @@ public class CounselController {
 
 		return result;
 	}
+
 }

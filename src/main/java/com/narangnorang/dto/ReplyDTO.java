@@ -14,11 +14,10 @@ public class ReplyDTO {
 
 	private int id;
 	private int memberId;
+	private String memberName;
 	private int postId;
 	private String content;
 	private String datetime;
 	private int likes;
-	// Member
-	private String memberName;
 
 }

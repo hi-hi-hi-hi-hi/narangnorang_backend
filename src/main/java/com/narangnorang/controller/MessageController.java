@@ -15,16 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.narangnorang.config.auth.PrincipalDetails;
 import com.narangnorang.dto.MemberDTO;
 import com.narangnorang.dto.MessageDTO;
-import com.narangnorang.service.MemberService;
 import com.narangnorang.service.MessageService;
 
 @RestController
 public class MessageController {
 
 	@Autowired
-	MessageService messageService;
-	@Autowired
-	MemberService memberService;
+	private MessageService messageService;
 
 	@GetMapping("/api/message/list")
 	public Map<String, Object> getMessageList(@AuthenticationPrincipal PrincipalDetails principalDetails)

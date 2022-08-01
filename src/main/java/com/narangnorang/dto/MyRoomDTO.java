@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 public class MyRoomDTO {
 
 	private int id;
-	//member 고유번호
 	private int memberId;
 	private int floor;
 	private int wallpaper;

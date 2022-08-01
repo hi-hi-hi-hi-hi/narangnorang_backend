@@ -12,7 +12,7 @@ import com.narangnorang.dto.MemberDTO;
 public class CounselDAO {
 
 	@Autowired
-	SqlSession sqlSession;
+	private SqlSession sqlSession;
 
 	// 상담사 List
 	public List<MemberDTO> selectCounselorList() throws Exception {

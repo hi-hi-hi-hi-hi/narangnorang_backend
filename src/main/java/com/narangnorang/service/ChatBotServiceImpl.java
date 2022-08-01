@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.narangnorang.dto.ChallengeDTO;
 import com.narangnorang.dao.ChatBotDAO;
+import com.narangnorang.dto.ChallengeDTO;
 import com.narangnorang.dto.DailyLogDTO;
 import com.narangnorang.dto.MoodStateDTO;
 
@@ -13,7 +13,7 @@ import com.narangnorang.dto.MoodStateDTO;
 public class ChatBotServiceImpl implements ChatBotService {
 
 	@Autowired
-	ChatBotDAO chatBotDAO;
+	private ChatBotDAO chatBotDAO;
 
 	// 챌린지 조회(하루)
 	@Override

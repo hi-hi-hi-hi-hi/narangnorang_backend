@@ -15,7 +15,7 @@ public class NotificationDTO {
 	private int id;
 	private int memberId;
 	private int postId;
-	// 게시글 정보
 	private String postTitle;
 	private String postCategory;
+
 }
