@@ -47,6 +47,9 @@ public class MemberController {
 	// 로그인
 	@PostMapping("/api/login")
 	public MemberDTO login(@AuthenticationPrincipal PrincipalDetails principalDetails) throws Exception {
+		if (principalDetails == null) {
+			return null;
+		}
 		return principalDetails.getMemberDTO();
 	}
 
@@ -56,12 +59,6 @@ public class MemberController {
 		session.invalidate();
 		return true;
 	}
-
-	// 세션 만료
-//	@GetMapping("/sessionInvalidate")
-//	public String sessionInvalidate() throws Exception {
-//		return "common/sessionInvalidate";
-//	}
 
 	// 일반회원가입 처리
 	@PostMapping("/api/generalSignUp")
@@ -116,12 +113,9 @@ public class MemberController {
 	public int myPageNewPw(Authentication authentication, HttpSession session, @RequestBody MemberDTO memberDTO) throws Exception {
 		String email = authentication.getName();
 		MemberDTO mDTO = memberService.selectByEmail(email);
-//		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
 		String rawPassWord = memberDTO.getPassword();
 		String encPassWord = bCryptPasswordEncoder.encode(rawPassWord);
 		mDTO.setPassword(encPassWord);
-//		mDTO.setPassword(memberDTO.getPassword());
-//		session.setAttribute("login", mDTO);
 		return memberService.newPw(mDTO);
 	}
 
