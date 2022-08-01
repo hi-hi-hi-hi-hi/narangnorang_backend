@@ -12,7 +12,7 @@ import com.narangnorang.dto.MoodStateDTO;
 public class ChatBotDAO {
 
 	@Autowired
-	SqlSession sqlSession;
+	private SqlSession sqlSession;
 
 	// 챌린지 조회(하루)
 	public ChallengeDTO selectChallenge(ChallengeDTO challengeDTO) throws Exception {

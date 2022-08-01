@@ -12,7 +12,7 @@ import com.narangnorang.dto.TestResultDTO;
 public class TestDAO {
 
 	@Autowired
-	SqlSession sqlSession;
+	private SqlSession sqlSession;
 
 	// 테스트 결과 저장
 	public int insert(TestResultDTO testResultDTO) throws Exception {

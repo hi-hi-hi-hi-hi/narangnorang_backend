@@ -13,7 +13,7 @@ import com.narangnorang.dto.MessageDTO;
 public class MessageDAO {
 
 	@Autowired
-	SqlSession sqlSession;
+	private SqlSession sqlSession;
 
 	public List<MessageDTO> getMessageList(int userId) throws Exception {
 		return sqlSession.selectList("com.config.MessageMapper.getMessageList", userId);

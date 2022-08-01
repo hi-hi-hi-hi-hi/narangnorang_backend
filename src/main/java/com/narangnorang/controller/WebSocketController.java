@@ -18,6 +18,7 @@ public class WebSocketController {
 
 	@Autowired
 	private MessageService messageService;
+
 	private final SimpMessagingTemplate simpMessagingTemplate;
 
 	@MessageMapping("/ws/message")

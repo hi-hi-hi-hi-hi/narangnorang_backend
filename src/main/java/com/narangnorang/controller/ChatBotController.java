@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +29,10 @@ import com.narangnorang.service.ChatBotService;
 public class ChatBotController {
 
 	@Autowired
-	ChatBotService chatBotService;
+	private ChatBotService chatBotService;
+
+	@Value("${spring.servlet.multipart.location}")
+	private String uploadPath;
 
 	// 챌린지 조회(하루)
 	@GetMapping("/api/chatbot/challenge")
@@ -122,9 +126,7 @@ public class ChatBotController {
 		Calendar calendar = Calendar.getInstance();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		String datetime = simpleDateFormat.format(calendar.getTime());
-		String uploadPath = request.getSession().getServletContext().getRealPath("/")
-				.concat("resources\\images\\challenge");
-		multipartFile.transferTo(new File(uploadPath, memberId + "_" + datetime + ".png"));
+		multipartFile.transferTo(new File(uploadPath + "challenge/", memberId + "_" + datetime + ".png"));
 		Map<String, Object> response = new HashMap<String, Object>();
 		response.put("flag", false);
 		/* ----------이미지 분석---------- */

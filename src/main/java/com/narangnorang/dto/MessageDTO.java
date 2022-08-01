@@ -11,19 +11,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Alias("MessageDTO")
 public class MessageDTO {
-	
-	// Message
+
 	private int id;
-	private int senderId; // id
-	private int recieverId; // id
+	private int senderId;
+	private String senderName;
+	private int senderPrivilege;
+	private int recieverId;
+	private String recieverName;
+	private int recieverPrivilege;
 	private String content;
 	private String datetime;
 	private int read;
-	
-	// Member
-	private String senderName;
-	private int senderPrivilege;
-	private String recieverName;
-	private int recieverPrivilege;
 
 }

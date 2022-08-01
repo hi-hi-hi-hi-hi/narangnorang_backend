@@ -14,7 +14,7 @@ import com.narangnorang.dto.MoodStateDTO;
 public class MyNorangDAO {
 
 	@Autowired
-	SqlSession sqlSession;
+	private SqlSession sqlSession;
 
 	// 일일 데이터 조회(한달)
 	public List<DailyLogDTO> selectDailyLogList(DailyLogDTO dailyLogDTO) throws Exception {

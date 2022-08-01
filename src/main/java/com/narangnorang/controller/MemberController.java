@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
@@ -27,8 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 import com.narangnorang.config.auth.PrincipalDetails;
 import com.narangnorang.dto.MemberDTO;
 import com.narangnorang.service.MemberService;
@@ -37,11 +36,13 @@ import com.narangnorang.service.MemberService;
 public class MemberController {
 
 	@Autowired
-	MemberService memberService;
+	private MemberService memberService;
 	@Autowired
-	JavaMailSender javaMailSender;
+	private JavaMailSender javaMailSender;
 	@Autowired
-	BCryptPasswordEncoder bCryptPasswordEncoder;
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Value("${spring.servlet.multipart.location}")
+	private String uploadPath;
 
 	// 로그인
 	@PostMapping("/api/login")
@@ -152,15 +153,13 @@ public class MemberController {
 	// 프로필 사진 수정
 	@PutMapping("/api/photoUpdate")
 	public void photoUpdate(HttpSession session, HttpServletRequest request, @RequestParam MultipartFile mFile) throws Exception {
-		String uploadPath = request.getSession().getServletContext().getRealPath("/")
-				.concat("resources/images/member/");
 		MemberDTO mDTO = (MemberDTO) session.getAttribute("login");
 		try {
 			File file = new File(uploadPath + mDTO.getId());
 			file.delete();
 
 			String newName = String.valueOf(mDTO.getId());
-			mFile.transferTo(new File(uploadPath + newName + ".png"));
+			mFile.transferTo(new File(uploadPath + "member/" + newName + ".png"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

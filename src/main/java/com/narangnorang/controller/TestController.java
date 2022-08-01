@@ -20,7 +20,7 @@ import com.narangnorang.service.TestService;
 public class TestController {
 
 	@Autowired
-	TestService testService;
+	private TestService testService;
 
 	// 테스트 결과 저장
 	@PostMapping("/api/test/{type}/{result}")

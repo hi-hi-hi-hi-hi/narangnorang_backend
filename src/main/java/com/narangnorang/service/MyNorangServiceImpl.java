@@ -14,7 +14,7 @@ import com.narangnorang.dto.MoodStateDTO;
 public class MyNorangServiceImpl implements MyNorangService {
 
 	@Autowired
-	MyNorangDAO myNorangDAO;
+	private MyNorangDAO myNorangDAO;
 
 	// 일일 데이터 조회(한달)
 	@Override

@@ -14,7 +14,7 @@ import com.narangnorang.dto.MessageDTO;
 public class MessageServiceImpl implements MessageService {
 
 	@Autowired
-	MessageDAO messageDAO;
+	private MessageDAO messageDAO;
 
 	@Override
 	public List<MessageDTO> getMessageList(int userId) throws Exception {

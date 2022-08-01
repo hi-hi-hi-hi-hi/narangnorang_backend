@@ -29,7 +29,7 @@ import com.narangnorang.service.MyNorangService;
 public class MyNorangController {
 
 	@Autowired
-	MyNorangService myNorangService;
+	private MyNorangService myNorangService;
 
 	// 일일 데이터 조회(한달)
 	@GetMapping("/api/mynorang/dailylog")

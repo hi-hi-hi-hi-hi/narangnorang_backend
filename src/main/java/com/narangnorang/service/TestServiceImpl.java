@@ -12,7 +12,7 @@ import com.narangnorang.dto.TestResultDTO;
 public class TestServiceImpl implements TestService {
 
 	@Autowired
-	TestDAO testDAO;
+	private TestDAO testDAO;
 
 	// 테스트 결과 저장
 	@Override
