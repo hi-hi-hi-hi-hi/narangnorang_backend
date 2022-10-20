@@ -1,5 +1,8 @@
 # narangnorang_backend
 
+## 배포 홈페이지!!
+http://narangnorang.com/
+
 ##### _[frontend사이트는 여기!](https://github.com/hi-hi-hi-hi-hi/narangnorang_frontend)_  
 
 ## 나랑노랑 웹 프로젝트는
