@@ -1,4 +1,4 @@
-# 🏥 나랑노랑
+# <img src="https://avatars.githubusercontent.com/u/104062593?s=200&v=4" height="40px"> 나랑노랑
 - 배포 주소 : http://narangnorang.site
 - 깃헙 주소
     - Backend : https://github.com/hi-hi-hi-hi-hi/narangnorang_backend
@@ -58,7 +58,7 @@
 ## 🎨 ERD 설계
 ![image](https://user-images.githubusercontent.com/95620153/175847217-5402e94b-cac7-4d13-8e87-154a4f02539c.png)
 
-## <img src="https://avatars.githubusercontent.com/u/104062593?s=200&v=4" height="25px"> Team
+## 😊😄🤓😉😇 Team
 ### 😊 서다원
 - UI, DB 설계
 - API 설계 및 구현
