@@ -1,13 +1,12 @@
-# 🏥 narangnorang
+# 🏥 나랑노랑
+- 배포 주소 : http://narangnorang.site
+- 깃헙 주소
+    - Backend : https://github.com/hi-hi-hi-hi-hi/narangnorang_backend
+    - Frontend : https://github.com/hi-hi-hi-hi-hi/narangnorang_frontend
+- 시연 영상 : https://youtu.be/uM4K8RimUwY
 - 우울증을 앓고있지만, 치료를 받지 못하고 있는 2030세대를 위한 멘탈케어 서비스입니다.
 - 챗봇을 통해 사용자의 상태를 기록합니다. 챗봇이 매일 제공하는 챌린지를 수행해 얻은 포인트로 나만의 미니룸을 꾸밀 수 있습니다.
 - 사용자 주변의 병원이나 상담센터의 위치를 확인할 수 있는 기능, 자신의 감정 상태를 확인해 볼 수 있는 테스트 기능, 사용자 사이에 정보를 공유하고 상담을 진행할 수 있는 게시판 기능이 있습니다.
-
-- 배포 주소 : 
-- 시연 영상 : https://youtu.be/uM4K8RimUwY
-- github 주소
-    - Backend : https://github.com/hi-hi-hi-hi-hi/narangnorang_backend
-    - Frontend : https://github.com/hi-hi-hi-hi-hi/narangnorang_frontend
 
 ## ⛏️ Skills
 ### ✔️ Backend
@@ -38,12 +37,12 @@
   <img src="https://img.shields.io/badge/bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white">
 </div>
 
-### ✔️ Open API
+### ✔️ OpenAPI
 <div>
   <img src="https://img.shields.io/badge/kakao 지도-FFCD00?style=for-the-badge&logo=kakao&logoColor=white">
 </div>
 
-### ✔️ 협업 툴
+### ✔️ Collaboration
 <div>
   <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
   <img src="https://img.shields.io/badge/slack-4A154B?style=for-the-badge&logo=slack&logoColor=white">
@@ -58,3 +57,37 @@
 
 ## 🎨 ERD 설계
 ![image](https://user-images.githubusercontent.com/95620153/175847217-5402e94b-cac7-4d13-8e87-154a4f02539c.png)
+
+## <img src="https://avatars.githubusercontent.com/u/104062593?s=200&v=4" height="25px"> Team
+### 😊 서다원
+- UI, DB 설계
+- API 설계 및 구현
+  - 커뮤니티
+  - 댓글, 추천 알림
+- OAuth2.0 방식의 Kakao 로그인 구현
+### 😄 고영훈
+- UI, DB 설계
+- API 설계 및 구현
+  - 회원가입
+  - 마이페이지
+  - 관리자페이지
+- OAuth2.0 방식의 Google 로그인 구현
+### 🤓 권동욱
+- UI, DB 설계
+- API 설계 및 구현
+  - 테스트
+  - 나의노랑
+  - 챗봇
+- Vuex로 전역 상태 관리
+### 😉 이재은
+- UI, DB 설계
+- API 설계 및 구현
+  - 상담하기
+  - 쪽지
+  - 쪽지 알림
+### 😇 이전영
+- UI, DB 설계
+- API 설계 및 구현
+  - 미니룸
+  - 상품 구매, 적용
+- OAuth2.0 방식의 Naver 로그인 구현
